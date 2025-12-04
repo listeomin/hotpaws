@@ -7,39 +7,37 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](.github/workflows/build.yml)
 
-Press **F19** to instantly access categorized terminal commands. Click any command to insert it into your terminal.
+Нажмите **F19**, чтобы мгновенно получить доступ к командам терминала. Щелкните по любой команде, чтобы вставить её в терминал.
 
 ![Hotpaws Demo]($/design.png)
 
-## ✨ Features
+## ✨ Возможности
 
-- **Instant Access**: F19 hotkey shows fullscreen overlay
-- **Smart Organization**: Commands grouped by category → section → command
-- **Universal Binary**: Runs natively on Intel and Apple Silicon Macs
-- **Customizable**: Edit commands and styles via `~/.hotpaws/`
-- **Multiple Terminals**: Supports Terminal.app, iTerm2, and Warp
+- **Мгновенный доступ**: Горячая клавиша (F19) для мгновенного перехода в полноэкранный режим подсказок
+- **Интеллектуальная организация**: Команды сгруппированы по категориям → Группам команд → Командам
+- **Универсальный двоичный файл**: Работает на Mac Intel (Silicon в будущих версиях)
+- **Настраиваемый**: Редактирование команд и стилей прямо в приложении
+- **Несколько терминалов**: Terminal.app, iTerm2, Warp и другие
 
-## 🚀 Quick Start
+## 🚀 Быстрый старт
 
 ```bash
-# Clone the repository
+# Клонируем репозиторий
 git clone https://github.com/listeomin/hotpaws.git
 cd hotpaws
 
-# Build the app
+# Собираем приложение
 ./scripts/build.sh
 
-# Run
+# Запускаем
 open build/Hotpaws.app
 ```
 
-**First run**: Grant Accessibility permissions when prompted (required for command insertion).
+**Первый запуск:** Предоставьте разрешение на доступ к системным функциям (Accessibility), когда появится запрос (необходимо для вставки команд).
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```
-Вот итоговая структура проекта:
-Итоговая структура Hotpaws
 hotpaws/
 ├── src/                      # Swift исходники
 │   ├── main.swift            # Точка входа, AppDelegate, WKWebView, хоткеи
@@ -85,17 +83,17 @@ hotpaws/
 └── CONTRIBUTING.md           # Гайд для контрибьюторов
 ```
 
-## 🎨 Customization
+## 🎨 Настройка
 
-On first run, Hotpaws creates `~/.hotpaws/` with:
+При первом запуске Hotpaws создаёт папку `~/.hotpaws/` с файлами:
 
-- `commands.json` - Your command library
-- `style.css` - Custom styling
-- `config.json` - App settings (future)
+- `commands.json` - ваша библиотека команд
+- `main.css` - пользовательские стили
+- `config.json` - настройки приложения (для будущего использования)
 
-Edit these files to customize your experience. Changes take effect on next launch.
+Редактируйте эти файлы, чтобы настроить приложение под себя. Изменения вступят в силу при следующем запуске.
 
-### Example: Adding Commands
+### Пример: добавление команд
 
 ```json
 {
@@ -122,67 +120,62 @@ Edit these files to customize your experience. Changes take effect on next launc
 }
 ```
 
-## 🛠 Tech Stack
+## 🛠 Технологии
 
-- **Language**: Swift 5
-- **UI**: WKWebView (HTML + CSS + JavaScript)
-- **Build**: swiftc (no Xcode required)
-- **Frameworks**: Cocoa, WebKit, Carbon
-- **Terminal Integration**: AppleScript
+- **Язык**: Swift 5
+- **Интерфейс**: WKWebView (HTML + CSS + JavaScript)
+- **Сборка**: swiftc (Xcode не требуется)
+- **Фреймворки**: Cocoa, WebKit, Carbon
+- **Интеграция с терминалом**: AppleScript
 
-## 🔧 Architecture
+## 🔧 Архитектура
 
 ```
-[F19 Pressed] → [Swift AppDelegate]
-                      ↓
-                [WKWebView Window]
-                      ↓
-                [HTML + JS Interface]
-                      ↓ (command clicked)
-                [webkit.messageHandlers]
-                      ↓
-                [Swift receives command]
-                      ↓
-                [AppleScript → Terminal]
+↓ [Нажмите F19]       → [Swift AppDelegate]
+↓ [Окно WKWebView]
+↓ [Интерфейс HTML + JS]
+↓ [webkit.messageHandlers]
+↓ [Swift получает команду]
+↓ [AppleScript → Terminal]
 ```
 
-## 📋 Requirements
+## 📋 Требования
 
-- macOS 12.0+
-- Accessibility permissions (for command insertion)
-- Terminal.app, iTerm2, or Warp
+- macOS 12.0 и выше
+- Разрешения на доступ к системным функциям (Accessibility) для вставки команд
+- Terminal.app, iTerm2, or Warp и другие
 
-## 🐛 Known Issues
+## 🐛 Известные проблемы
 
-- First launch requires manual Accessibility permission grant
-- Build directory ignored by git (`.app` bundles excluded)
+- При первом запуске необходимо вручную предоставить разрешение Accessibility
+- Директория сборки игнорируется Git (`.app` пакеты исключены)
 
-## 🗺 Roadmap
+## 🗺 Дорожная карта
 
-- [ ] GUI for editing commands
-- [ ] Command search/filter
-- [ ] Command aliases support
-- [ ] Theme system
-- [ ] iCloud sync
+- [ ] Графический интерфейс для редактирования команд
+- [ ] Поиск и фильтрация команд
+- [ ] Поддержка псевдонимов команд
+- [ ] Система тем
+- [ ] Синхронизация в облаке Google Диск и iCloud
 
-## 📝 License
+## 📝 Лицензия
 
-MIT
+[MIT](https://opensource.org/licenses/MIT)
 
-## 🤝 Contributing
+## 🤝 Участие в проекте
 
-Contributions welcome! This project is designed for beginners who struggle with terminal commands.
+Будем рады вашим вкладом! Этот проект создан для новичков, которым сложно работать с командами терминала.
 
-**Philosophy**: 
-- Focus on beginners, not power users
-- Wrap complexity in intuitive interfaces
-- External config over code changes
-- No command execution without user confirmation
+**Философия**: 
+- Сосредоточенность на новичках, а не на продвинутых пользователях
+- Скрытие сложности за интуитивным интерфейсом
+- Внешняя настройка через конфигурацию, а не через изменения кода
+- Команды не выполняются без подтверждения пользователя
 
-## 📖 Documentation
 
-See `$/project-doc.md` for complete technical documentation.
+## 📖 Документация
+
+Полную техническую документацию см. в файле `$/project-doc.md`.
 
 ---
-
-Made with 🐾 by [@listeomin](https://github.com/listeomin)
+Создано с 🐾[@listeomin](https://github.com/listeomin)
