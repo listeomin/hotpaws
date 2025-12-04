@@ -38,20 +38,51 @@ open build/Hotpaws.app
 ## 📁 Project Structure
 
 ```
+Вот итоговая структура проекта:
+Итоговая структура Hotpaws
 hotpaws/
-├── src/                    # Swift source files
-│   ├── main.swift         # Entry point, AppDelegate
-│   └── ConfigManager.swift # Config loading from ~/.hotpaws/
-├── resources/             # HTML/CSS/JS interface
-│   ├── index.html        # Overlay structure
-│   ├── script.js         # UI logic
-│   ├── style.css         # Default styles
-│   └── commands.json     # Default commands
-├── scripts/              # Build and AppleScript helpers
-│   ├── build.sh         # Universal binary builder
-│   └── *.applescript    # Terminal integrations
-├── build/               # Compiled .app bundle
-└── $/                   # Documentation and design files
+├── src/                      # Swift исходники
+│   ├── main.swift            # Точка входа, AppDelegate, WKWebView, хоткеи
+│   └── ConfigManager.swift   # Загрузка конфигов из ~/.hotpaws/
+│
+├── resources/                # Ресурсы (копируются в .app)
+│   ├── index.html            # HTML структура оверлея
+│   ├── main.css              # Стили
+│   ├── main.js               # JavaScript логика
+│   ├── commands.json         # Команды пользователя
+│   ├── commands-meta.json    # Словарь команд для автодополнения
+│   └── AppIcon.icns          # Иконка приложения
+│
+├── scripts/                  # Скрипты
+│   ├── build.sh              # Сборка приложения
+│   ├── cleanup.sh            # Очистка билдов
+│   ├── terminal.applescript  # AppleScript для Terminal.app
+│   ├── iterm2.applescript    # AppleScript для iTerm2
+│   ├── warp.applescript      # AppleScript для Warp
+│   ├── fallback.applescript  # Резервный AppleScript
+│   └── README.md             # Описание скриптов
+│
+├── build/                    # Артефакты сборки (в .gitignore)
+│   └── Hotpaws.app/          # Собранное приложение
+│
+├── $/                        # Рабочие документы (не в git)
+│   ├── project-doc.md        # Документация проекта
+│   ├── tasks.md              # Задачи с промптами
+│   ├── edit-mode-tasks.md    # Задачи по режиму редактирования
+│   ├── design.png            # Дизайн-макет
+│   └── CATEGORY_SELECTS.md   # Документация селектов
+│
+├── .github/                  # GitHub конфигурация
+│   ├── workflows/
+│   │   └── build.yml
+│   └── ISSUE_TEMPLATE/
+│
+├── .gitignore
+├── Info.plist                # Настройки macOS приложения
+├── LICENSE                   # MIT лицензия
+├── README.md                 # Описание для GitHub
+├── CHANGELOG.md              # История изменений
+└── CONTRIBUTING.md           # Гайд для контрибьюторов
 ```
 
 ## 🎨 Customization
