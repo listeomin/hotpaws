@@ -1,356 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotpaws</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            width: 100%;
-            height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #fff;
-            background: transparent !important;
-            overflow: hidden;
-        }
-        
-        /* Фоновый слой — стабильный тёмный фон БЕЗ размытия */
-        .overlay-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 10, 15, 0.92);
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(30, 30, 45, 0.3), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(25, 25, 40, 0.25), transparent 35%);
-            z-index: 1;
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-        }
-        
-        /* Контейнер контента */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 80px 40px 40px;
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        .overlay > * {
-            pointer-events: auto;
-        }
-        
-        /* Категории (табы) */
-        .categories {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 50px;
-            flex-wrap: wrap;
-        }
-        
-        .category-tab {
-            padding: 12px 24px;
-            background: rgba(30, 30, 40, 0.95);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .category-tab:hover {
-            background: rgba(45, 45, 60, 0.95);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
-        }
-        
-        .category-tab.active {
-            background: rgba(255, 221, 0, 0.95);
-            border-color: rgba(255, 221, 0, 1);
-            color: #000;
-            font-weight: 700;
-            box-shadow: 0 0 20px rgba(255, 221, 0, 0.5);
-        }
-        
-        /* Контент */
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            padding-bottom: 20px;
-        }
-        
-        .commands-container {
-            display: flex;
-            gap: 70px;
-            max-width: 1400px;
-            padding: 0 20px;
-        }
-        
-        /* Группы */
-        .group {
-            min-width: 240px;
-            flex: 1;
-        }
-        
-        /* Заголовки групп — ПРОСТО ТЕКСТ */
-        .group-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            margin-bottom: 14px;
-            padding-left: 2px;
-        }
-        
-        .commands {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        /* Кнопки команд */
-        .command {
-            padding: 14px 22px;
-            background: rgba(30, 30, 40, 0.96);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer !important;
-            transition: all 0.15s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Hover состояние */
-        .command:hover {
-            background: rgba(255, 221, 0, 0.95) !important;
-            border-color: rgba(255, 221, 0, 1) !important;
-            color: #000 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(255, 221, 0, 0.4);
-        }
-        
-        .command:hover .command-label {
-            color: #000 !important;
-        }
-        
-        .command:hover .command-description {
-            color: rgba(0, 0, 0, 0.6) !important;
-        }
-        
-        /* Active состояние (клик) */
-        .command:active {
-            transform: scale(0.98) !important;
-            box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3);
-        }
-        
-        .command-label {
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.15s ease;
-        }
-        
-        .command-description {
-            font-size: 11px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.4);
-            line-height: 1.3;
-            transition: color 0.15s ease;
-        }
-        
-        /* Футер */
-        .footer {
-            text-align: center;
-            padding-top: 24px;
-            flex-shrink: 0;
-        }
-        
-        .hint {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 10px 20px;
-            background: rgba(30, 30, 40, 0.85);
-            border-radius: 24px;
-            display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Скроллбар */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 221, 0, 0.4);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 221, 0, 0.6);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Hotpaws</title>
+
+  <!-- Стили первыми -->
+  <link rel="stylesheet" href="main.css">
+
+  <!-- Скрипт с defer, чтобы не блокировать парсинг и чтобы DOM был готов -->
+  <script src="main.js" defer></script>
 </head>
 <body>
-    <div class="overlay-backdrop"></div>
-    
-    <div class="overlay" id="overlay">
-        <nav class="categories" id="categories"></nav>
-        
-        <main class="content" id="content">
-            <div class="commands-container" id="commands-container"></div>
-        </main>
-        
-        <footer class="footer">
-            <span class="hint">ESC — закрыть • ← → переключение категорий</span>
-        </footer>
-    </div>
-    
-    <!-- Модальное окно редактирования команды -->
-    <div class="modal-overlay" id="modal-overlay">
-        <div class="modal" id="modal">
-            <div class="modal-header">
-                <h2>Редактирование команды</h2>
-                <button class="modal-close" id="modal-close">✕</button>
-            </div>
-            <div class="modal-body">
-                <form id="command-form">
-                    <!-- Команда (обязательное поле) -->
-                    <div class="form-group">
-                        <label for="command-input" class="form-label">
-                            <span class="form-label-text">Команда</span>
-                            <span class="form-label-required">*</span>
-                        </label>
-                        <input 
-                            type="text" 
-                            id="command-input" 
-                            class="form-input" 
-                            placeholder="git status"
-                            required
-                        >
-                    </div>
-                    
-                    <!-- Описание (опциональное поле) -->
-                    <div class="form-group">
-                        <label for="description-input" class="form-label">
-                            <span class="form-label-text">Описание</span>
-                        </label>
-                        <textarea 
-                            id="description-input" 
-                            class="form-textarea" 
-                            placeholder="Показать состояние репозитория Git"
-                            rows="3"
-                        ></textarea>
-                    </div>
-                    
-                    <!-- Категория (связанный select) -->
-                    <div class="form-group">
-                        <label for="category-select" class="form-label">
-                            <span class="form-label-text">Категория</span>
-                        </label>
-                        <div class="custom-select" id="category-select-wrapper">
-                            <button type="button" class="custom-select-button" id="category-select-button">
-                                <span class="custom-select-value">Выберите категорию</span>
-                                <span class="custom-select-arrow">▼</span>
-                            </button>
-                            <div class="custom-select-options" id="category-select-options">
-                                <!-- Options будут добавлены через JS -->
-                            </div>
-                            <input type="hidden" id="category-select" name="category" required>
-                        </div>
-                    </div>
-                    
-                    <!-- Группа команд (зависит от категории) -->
-                    <div class="form-group">
-                        <label for="group-select" class="form-label">
-                            <span class="form-label-text">Группа команд</span>
-                        </label>
-                        <div class="custom-select" id="group-select-wrapper">
-                            <button type="button" class="custom-select-button" id="group-select-button" disabled>
-                                <span class="custom-select-value">Сначала выберите категорию</span>
-                                <span class="custom-select-arrow">▼</span>
-                            </button>
-                            <div class="custom-select-options" id="group-select-options">
-                                <!-- Options будут добавлены через JS -->
-                            </div>
-                            <input type="hidden" id="group-select" name="group" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group form-group-placeholder">
-                        <label class="form-label form-label-placeholder">
-                            <span class="form-label-text">Алиас</span>
-                            <span class="form-label-coming-soon">скоро</span>
-                        </label>
-                        <div class="form-input-placeholder">gs, status...</div>
-                    </div>
-                    
-                    <div class="form-group form-group-placeholder">
-                        <label class="form-label form-label-placeholder">
-                            <span class="form-label-text">Горячая клавиша</span>
-                            <span class="form-label-coming-soon">скоро</span>
-                        </label>
-                        <div class="form-input-placeholder">⌘G, Ctrl+S...</div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div class="modal-footer-left">
-                    <button type="button" class="btn btn-danger" id="btn-delete">
-                        Удалить
-                    </button>
-                </div>
-                <div class="modal-footer-right">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel">
-                        Отмена
-                    </button>
-                    <button type="submit" form="command-form" class="btn btn-primary" id="btn-save">
-                        Сохранить
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+  <!--
+    Порядок в DOM соответствует z-index слоям:
+    1) backdrop (фон) — z-index: 0
+    2) app window (основной UI) — z-index: 1
+    3) модали/диалоги — z-index: 2+
+  -->
 
-    <!-- Диалог подтверждения удаления -->
-    <div class="confirm-overlay" id="confirm-overlay">
-        <div class="confirm-dialog">
-            <div class="confirm-header">
-                <h3>Подтверждение удаления</h3>
-            </div>
-            <div class="confirm-body">
-                <p id="confirm-message">Удалить команду «git status»?</p>
-            </div>
-            <div class="confirm-footer">
-                <button type="button" class="btn btn-secondary" id="btn-confirm-no">
-                    Ой, нет!
-                </button>
-                <button type="button" class="btn btn-danger-confirm" id="btn-confirm-yes">
-                    Да, удалить
-                </button>
-            </div>
-        </div>
-    </div>
+  <!-- Фоновый слой (backdrop) -->
+  <div class="overlay-backdrop" id="overlay-backdrop" aria-hidden="true"></div>
 
-    <script src="main.js"></script>
+  <!-- Основное окно приложения -->
+  <div class="overlay app-window" id="overlay" role="application" aria-labelledby="app-title">
+    <!-- (опционально) скрытый заголовок для доступности -->
+    <h1 id="app-title" class="visually-hidden">Hotpaws Overlay</h1>
+
+    <!-- Навигация категорий -->
+    <nav class="categories" id="categories" role="navigation" aria-label="Категории команд"></nav>
+
+    <!-- Основной контент -->
+    <main class="content" id="content" role="main" tabindex="-1">
+      <div class="commands-container" id="commands-container" aria-live="polite"></div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer" role="contentinfo">
+      <span class="hint">ESC — закрыть • ← → переключение категорий</span>
+    </footer>
+  </div>
+
+  <!-- Модальное окно редактирования команды (портал в корне body) -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+    <div class="modal" id="modal" role="document">
+      <div class="modal-header">
+        <h2 id="modal-title">Редактирование команды</h2>
+        <button class="modal-close" id="modal-close" type="button" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="command-form" novalidate>
+          <!-- Команда (обязательное поле) -->
+          <div class="form-group">
+            <label for="command-input" class="form-label">
+              <span class="form-label-text">Команда</span>
+              <span class="form-label-required" aria-hidden="true">*</span>
+            </label>
+            <input
+              type="text"
+              id="command-input"
+              class="form-input"
+              placeholder="git status"
+              required
+              aria-required="true"
+            >
+          </div>
+
+          <!-- Описание -->
+          <div class="form-group">
+            <label for="description-input" class="form-label">
+              <span class="form-label-text">Описание</span>
+            </label>
+            <textarea
+              id="description-input"
+              class="form-textarea"
+              placeholder="Показать состояние репозитория Git"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- Категория (доступный кастомный select) -->
+          <div class="form-group">
+            <label for="category-select" class="form-label">
+              <span class="form-label-text">Категория</span>
+            </label>
+            <div class="custom-select" id="category-select-wrapper" role="combobox" aria-haspopup="listbox" aria-expanded="false">
+              <button type="button" class="custom-select-button" id="category-select-button" aria-controls="category-select-options">
+                <span class="custom-select-value">Выберите категорию</span>
+                <span class="custom-select-arrow" aria-hidden="true">▼</span>
+              </button>
+              <div class="custom-select-options" id="category-select-options" role="listbox" tabindex="-1" aria-hidden="true">
+                <!-- Options добавляются через JS как элементы с role="option" -->
+              </div>
+              <input type="hidden" id="category-select" name="category" required>
+            </div>
+          </div>
+
+          <!-- Группа команд -->
+          <div class="form-group">
+            <label for="group-select" class="form-label">
+              <span class="form-label-text">Группа команд</span>
+            </label>
+            <div class="custom-select" id="group-select-wrapper" role="combobox" aria-haspopup="listbox" aria-expanded="false">
+              <button type="button" class="custom-select-button" id="group-select-button" disabled aria-disabled="true">
+                <span class="custom-select-value">Сначала выберите категорию</span>
+                <span class="custom-select-arrow" aria-hidden="true">▼</span>
+              </button>
+              <div class="custom-select-options" id="group-select-options" role="listbox" tabindex="-1" aria-hidden="true">
+                <!-- Options добавляются через JS -->
+              </div>
+              <input type="hidden" id="group-select" name="group" required>
+            </div>
+          </div>
+
+          <!-- Плейсхолдеры для будущих полей -->
+          <div class="form-group form-group-placeholder" aria-hidden="true">
+            <label class="form-label form-label-placeholder">
+              <span class="form-label-text">Алиас</span>
+              <span class="form-label-coming-soon">скоро</span>
+            </label>
+            <div class="form-input-placeholder">gs, status...</div>
+          </div>
+
+          <div class="form-group form-group-placeholder" aria-hidden="true">
+            <label class="form-label form-label-placeholder">
+              <span class="form-label-text">Горячая клавиша</span>
+              <span class="form-label-coming-soon">скоро</span>
+            </label>
+            <div class="form-input-placeholder">⌘G, Ctrl+S...</div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button type="button" class="btn btn-danger" id="btn-delete">Удалить</button>
+        </div>
+        <div class="modal-footer-right">
+          <button type="button" class="btn btn-secondary" id="btn-cancel">Отмена</button>
+          <button type="submit" form="command-form" class="btn btn-primary" id="btn-save">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Диалог подтверждения удаления -->
+  <div class="confirm-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="confirm-title">
+    <div class="confirm-dialog" role="document">
+      <div class="confirm-header">
+        <h3 id="confirm-title">Подтверждение удаления</h3>
+      </div>
+      <div class="confirm-body">
+        <p id="confirm-message">Удалить команду «git status»?</p>
+      </div>
+      <div class="confirm-footer">
+        <button type="button" class="btn btn-secondary" id="btn-confirm-no">Ой, нет!</button>
+        <button type="button" class="btn btn-danger-confirm" id="btn-confirm-yes">Да, удалить</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

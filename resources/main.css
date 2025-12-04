@@ -1,1179 +1,1319 @@
-/* ============================================
-   Hotpaws Overlay — CSS Styles
-   Тёмная тема, минималистичный дизайн
-   ============================================ */
+/* Hotpaws Overlay — CSS Styles. Тёмная тема, минималистичный дизайн
+Правила: Перед началом работ с файлом ознакомся с правилами и строго им следуй!
+- Никакой мобильной адаптации Приложение ориентировано только на macOS с ширины окна от 1280px, все медиазапросы для меньших экранов удаляются или помечаются как экспериментальные.
+- Структура от общего к частному Файл начинается с переменных и глобального сброса, затем идут фоновые слои, контейнеры уровня приложения, секции интерфейса и в конце мелкие компоненты и утилиты.
+- Единый источник правды для значений Все цвета, размеры, отступы, радиусы и длительности анимаций объявляются в :root и используются через переменные, дублирование значений запрещено.
+- Минимум дублирования селекторов Один селектор — одно место определения. Если нужен альтернативный стиль, используем модификаторный класс с понятным именем.
+- Ясная иерархия слоев и z-index Определяем и документируем уровни: backdrop z-index 0, overlay z-index 1, app-window z-index 2, интерактивные всплывающие элементы z-index 3. pointer-events управляем локально, а не глобально.
+- Однозначные правила для интерактивности Не использовать pointer-events none на контейнерах без явной причины, избегать глобальных !important, hover и focus стили должны быть согласованы и доступными.
+- Единая модель layout для компонентов Для каждой области выбираем одну модель layout grid или flex, не смешиваем их для одного и того же блока без модификаторов.
+- Анимации и ключевые кадры централизованы Все @keyframes и переменные длительности собираются в отдельной секции, имена анимаций уникальны и семантичны.
+- Стили скроллбаров согласованы Базовый стиль скроллбара задаётся глобально, локальные переопределения минимальны и документированы.
+- Документирование и комментарии Каждая логическая секция снабжается коротким комментарием с назначением и примерами использования, изменения фиксируются в changelog.
+- Тестируемость и предсказуемость После правок запускаем визуальные проверки на целевой платформе macOS, проверяем фокусную навигацию и поведение при клавиатурном вводе.
+- Удалять устаревшее и экспериментальное Медиазапросы, временные хаки и экспериментальные правила помечаются тегом TODO и удаляются перед релизом.*/
 
-:root {
+ :root {
   /* Цвета */
-  --bg-primary: rgba(13, 13, 18, 0.95);
-  --bg-secondary: rgba(30, 30, 40, 0.8);
-  --bg-tertiary: rgba(45, 45, 60, 0.6);
-  --bg-secondary-rgb: 30, 30, 40;
-  --text-primary: #e8e8ef;
-  --text-secondary: #a8a8b8;
-  --text-muted: #7a7a8a;
-  --accent-primary: #ffdd00;
-  --accent-hover: #fff44f;
-  --accent-active: #ffe680;
-  --code-color: #4dd0e1;
-  --border-color: rgba(255, 221, 0, 0.2);
-  --border-hover: rgba(255, 221, 0, 0.5);
-
+  --bg-primary: rgba(13, 13, 18, 0.95); /* основной фон элементов */
+  --bg-secondary: rgba(30, 30, 40, 0.8); /* вторичный фон для карточек/панелей */
+  --bg-tertiary: rgba(45, 45, 60, 0.6); /* фон при hover/акцентных состояниях */
+  --bg-secondary-rgb: 30, 30, 40; /* RGB-версия для смешивания через rgba() */
+  --text-primary: #e8e8ef; /* основной цвет текста */
+  --text-secondary: #a8a8b8; /* второстепенный текст */
+  --text-muted: #7a7a8a; /* приглушённый текст/подсказки */
+  --accent-primary: #ffdd00; /* главный акцент (жёлтый) */
+  --accent-hover: #fff44f; /* акцент при наведении */
+  --accent-active: #ffe680; /* акцент при активном состоянии */
+  --code-color: #4dd0e1; /* цвет кода/моно текста */
+  --border-color: rgba(255, 221, 0, 0.2); /* базовый цвет границ */
+  --border-hover: rgba(255, 221, 0, 0.5); /* цвет границ при hover */
+  
   /* Размеры шрифтов */
-  --font-size-base: 14px;
-  --font-size-sm: 12px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-
+  --font-size-base: 14px; /* базовый размер шрифта */
+  --font-size-sm: 12px; /* небольшой шрифт */
+  --font-size-lg: 16px; /* крупнее базового */
+  --font-size-xl: 18px; /* крупные заголовки */
+  
   /* Отступы */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
+  --spacing-xs: 4px; /* очень маленький отступ */
+  --spacing-sm: 8px; /* небольшой отступ */
+  --spacing-md: 16px; /* средний отступ */
+  --spacing-lg: 24px; /* большой отступ */
+  --spacing-xl: 32px; /* очень большой отступ */
+  
   /* Скругления */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
+  --radius-sm: 4px; /* лёгкое скругление */
+  --radius-md: 8px; /* среднее скругление */
+  --radius-lg: 12px; /* сильное скругление */
+  
   /* Переходы */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1); /* быстрый аним. переход */
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1); /* стандартный переход */
+  }
+  
+  /* Основные стили */
+  
+  * {
+  margin: 0; /* сброс внешних отступов */
+  padding: 0; /* сброс внутренних отступов */
+  box-sizing: border-box; /* учитываем padding и border в расчёте размеров */
+  }
+  
+  html, body {
+  width: 100%; /* растягиваем на ширину окна */
+  height: 100%; /* растягиваем на высоту окна */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; /* системные шрифты для кроссплатформенности */
+  color: var(--text-primary); /* основной цвет текста из переменной */
+  background: transparent !important; /* прозрачный фон, принудительно */
+  background-color: transparent !important; /* прозрачный цвет фона, принудительно */
+  }
+  
+  .overlay > * {
+    pointer-events: auto; /* возвращаем обработку событий для дочерних элементов */
+  }
+  
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0; /* начальное состояние — полностью прозрачный */
+    }
+    to {
+      opacity: 1; /* конечное состояние — полностью видимый */
+    }
+  }
+
+* { 
+  margin: 0; /* убираем все внешние отступы у элементов */
+  padding: 0; /* убираем все внутренние отступы */
+  box-sizing: border-box; /* учитываем padding и border внутри размеров элемента */
 }
-
-/* ============================================
-   Основные стили
-   ============================================ */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+      
 html, body {
-  width: 100%;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: var(--text-primary);
-  background: transparent !important;
-  background-color: transparent !important;
+  width: 100%; /* растягиваем на всю ширину окна */
+  height: 100%; /* растягиваем на всю высоту окна */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* системный шрифт для разных платформ */
+  color: #fff; /* основной цвет текста — белый */
+  background: transparent !important; /* прозрачный фон, принудительно */
+  overflow: hidden; /* скрываем прокрутку страницы */
 }
 
-/* ============================================
-   Оверлей контейнер
-   ============================================ */
+/* Фоновый слой — стабильный тёмный фон БЕЗ размытия */
 
+/* Оверлей контейнер */
 .overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  background: transparent !important;
-  background-color: transparent !important;
-  opacity: 0;
-  animation: overlayFadeIn var(--transition-normal) ease-out forwards;
+  position: fixed; /* фиксируем контейнер относительно окна браузера */
+  inset: 0; /* растягиваем на всю область (top:0; right:0; bottom:0; left:0) */
+  display: flex; /* используем flex-контейнер для внутренней компоновки */
+  flex-direction: column; /* располагаем дочерние элементы вертикально */
+  padding: 80px 40px 40px; /* внутренние отступы: сверху 80px, по бокам 40px, снизу 40px */
+  z-index: 0; /* слой выше фона, чтобы контент был виден */
+  pointer-events: none; /* отключаем обработку событий мыши для контейнера */
+
+  background: transparent !important; /* прозрачный фон, принудительно */
+  background-color: transparent !important; /* прозрачный цвет фона, принудительно */
+  opacity: 0; /* начальная прозрачность (невидимый при загрузке) */
+  animation: overlayFadeIn var(--transition-normal) ease-out forwards; 
+  /* анимация плавного появления: из opacity 0 в 1 */
 }
 
-@keyframes overlayFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.overlay-backdrop {
+  position: fixed; /* фиксируем относительно окна браузера */
+  inset: 0; /* растягиваем на всю область (top:0; right:0; bottom:0; left:0) */
+  background: rgba(10, 10, 15, 0.92); /* тёмный полупрозрачный фон */
+  background-image: 
+      radial-gradient(circle at 20% 30%, rgba(30, 30, 45, 0.3), transparent 40%), /* декоративный градиент слева сверху */
+      radial-gradient(circle at 80% 70%, rgba(25, 25, 40, 0.25), transparent 35%); /* декоративный градиент справа снизу */
+  z-index: 0; /* помещаем фон позади контента */
+  transform: translateZ(0); /* создаём новый слой для GPU-рендеринга */
+  -webkit-transform: translateZ(0); /* то же самое для Safari */
 }
 
-/* ============================================
-   Панель категорий (табы)
-   ============================================ */
-
+/* Категории (табы) */
 .categories {
-  display: flex;
-  gap: var(--spacing-md);
-  align-items: center;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border-bottom: 1px solid rgba(255, 221, 0, 0.1);
-  overflow-x: auto;
-  overflow-y: hidden;
-  background: linear-gradient(
-    180deg,
-    rgba(30, 30, 40, 0.4) 0%,
-    rgba(13, 13, 18, 0) 100%
-  );
-
-  /* Скроллбар стиль */
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-primary) transparent;
-}
-
-.categories::-webkit-scrollbar {
-  height: 6px;
-}
-
-.categories::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.categories::-webkit-scrollbar-thumb {
-  background: var(--accent-primary);
-  border-radius: var(--radius-sm);
+  display: flex; /* flex-контейнер для табов */
+  gap: 12px; /* расстояние между табами */
+  justify-content: center; /* выравнивание табов по центру */
+  margin-bottom: 50px; /* отступ снизу */
+  flex-wrap: wrap; /* перенос табов на новую строку при нехватке места */
 }
 
 .category-tab {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all var(--transition-fast);
+  padding: 12px 24px; /* внутренние отступы: сверху/снизу 12px, слева/справа 24px */
+  background: rgba(30, 30, 40, 0.95); /* тёмный фон таба */
+  border: 2px solid rgba(255, 255, 255, 0.2); /* светлая рамка */
+  border-radius: 24px; /* скруглённые углы */
+  color: rgba(255, 255, 255, 0.8); /* светлый текст */
+  font-size: 16px; /* размер шрифта */
+  font-weight: 500; /* полужирный текст */
+  cursor: pointer; /* курсор-рука при наведении */
+  transition: all 0.2s; /* плавные переходы при изменении */
+  display: flex; /* flex для иконки и текста */
+  align-items: center; /* вертикальное выравнивание по центру */
+  gap: 10px; /* расстояние между иконкой и текстом */
 }
 
 .category-tab:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  color: var(--accent-hover);
+  background: rgba(45, 45, 60, 0.95); /* фон при наведении */
+  border-color: rgba(255, 255, 255, 0.3); /* рамка при наведении */
+  transform: translateY(-1px); /* лёгкий подъём таба */
 }
 
 .category-tab.active {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: #000;
-  font-weight: 600;
-  box-shadow: 0 0 16px rgba(255, 221, 0, 0.3);
+  background: rgba(255, 221, 0, 0.95); /* яркий жёлтый фон активного таба */
+  border-color: rgba(255, 221, 0, 1); /* жёлтая рамка */
+  color: #000; /* чёрный текст */
+  font-weight: 700; /* жирный шрифт */
+  box-shadow: 0 0 20px rgba(255, 221, 0, 0.5); /* свечение вокруг активного таба */
 }
 
-.category-icon {
-  font-size: var(--font-size-xl);
-  line-height: 1;
-}
-
-.category-name {
-  letter-spacing: 0.3px;
-}
-
-/* ============================================
-   Основная область с командами
-   ============================================ */
-
+/* Контент */
 .content {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--spacing-xl);
-  padding-right: calc(var(--spacing-xl) - 10px); /* Для скроллбара */
+  flex: 1; /* занимает всё доступное пространство по основной оси */
+  overflow-y: auto; /* вертикальная прокрутка при переполнении */
+  overflow-x: hidden; /* скрываем горизонтальную прокрутку */
+  display: flex; /* контейнер для центрирования содержимого */
+  justify-content: center; /* выравниваем содержимое по центру горизонтально */
+  padding-bottom: 20px; /* отступ снизу для дыхания контента */
 }
 
 .commands-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-  animation: contentFadeIn var(--transition-normal) ease-out;
+  display: flex; /* горизонтальная раскладка групп команд */
+  gap: 70px; /* расстояние между колонками/группами */
+  max-width: 1400px; /* ограничиваем максимальную ширину контейнера */
+  padding: 0 20px; /* боковые внутренние отступы */
 }
 
-@keyframes contentFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Скроллбар для основной области */
-.content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: rgba(255, 221, 0, 0.3);
-  border-radius: var(--radius-sm);
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 221, 0, 0.5);
-}
-
-/* ============================================
-   Группы команд
-   ============================================ */
-
+/* Группы */
 .group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+  min-width: 240px; /* минимальная ширина колонки с командами */
+  flex: 1; /* равномерное распределение ширины между группами */
 }
 
+/* Заголовки групп — ПРОСТО ТЕКСТ */
 .group-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--accent-primary);
-  width: fit-content;
+  font-size: 11px; /* маленький, аккуратный размер шрифта */
+  font-weight: 600; /* полужирный для акцента */
+  color: rgba(255, 255, 255, 0.4); /* приглушённый белый */
+  text-transform: uppercase; /* заглавные буквы */
+  letter-spacing: 2.5px; /* увеличенный межбуквенный интервал */
+  margin-bottom: 14px; /* отступ снизу от заголовка до списка */
+  padding-left: 2px; /* лёгкий отступ слева для визуального выравнивания */
 }
-
-/* ============================================
-   Сетка команд
-   ============================================ */
 
 .commands {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--spacing-md);
+  display: flex; /* вертикальный список команд */
+  flex-direction: column; /* складываем элементы в колонку */
+  gap: 10px; /* расстояние между командами */
 }
 
-/* ============================================
-   Карточка команды
-   ============================================ */
-
+/* Кнопки команд */
 .command {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-align: left;
-  color: var(--text-primary);
-  font-size: var(--font-size-base);
-
-  /* Убираем дефолтные стили кнопки */
-  font-family: inherit;
+  padding: 14px 22px; /* внутренние отступы: вертикально 14px, горизонтально 22px */
+  background: rgba(30, 30, 40, 0.96); /* тёмный фон карточки команды */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* тонкая светлая рамка */
+  border-radius: 10px; /* скруглённые углы */
+  color: #fff; /* белый текст */
+  font-size: 15px; /* размер шрифта */
+  font-weight: 500; /* полужирный для читаемости */
+  text-align: left; /* выравнивание текста по левому краю */
+  cursor: pointer !important; /* курсор-рука, принудительно */
+  transition: all 0.15s ease; /* плавные переходы состояний */
+  display: flex; /* вертикальная компоновка содержимого карточки */
+  flex-direction: column; /* располагаем элементы сверху вниз */
+  gap: 4px; /* небольшой интервал между label/code/description */
+  -webkit-tap-highlight-color: transparent; /* убираем подсветку на мобильном Safari */
 }
 
+/* Hover состояние */
 .command:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 221, 0, 0.15);
+  background: rgba(255, 221, 0, 0.95) !important; /* яркий жёлтый фон при наведении */
+  border-color: rgba(255, 221, 0, 1) !important; /* жёлтая рамка */
+  color: #000 !important; /* чёрный текст для контраста */
+  transform: translateY(-2px); /* лёгкий подъём карточки */
+  box-shadow: 0 4px 16px rgba(255, 221, 0, 0.4); /* мягкая тень со свечением */
 }
 
+.command:hover .command-label {
+  color: #000 !important; /* чёрный цвет заголовка команды при hover */
+}
+
+.command:hover .command-description {
+  color: rgba(0, 0, 0, 0.6) !important; /* приглушённый чёрный для описания при hover */
+}
+
+/* Active состояние (клик) */
 .command:active {
-  transform: scale(0.98);
+  transform: scale(0.98) !important; /* лёгкое уменьшение при нажатии */
+  box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3); /* уменьшенная тень в активном состоянии */
 }
 
 .command-label {
-  font-weight: 600;
-  font-size: var(--font-size-base);
-  color: var(--accent-primary);
-  letter-spacing: 0.2px;
-}
-
-.command-code {
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-  font-size: var(--font-size-sm);
-  color: var(--code-color);
-  background: rgba(77, 208, 225, 0.1);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  word-break: break-all;
-  white-space: pre-wrap;
-  overflow-x: auto;
+  font-size: 15px; /* размер шрифта заголовка команды */
+  font-weight: 500; /* полужирный для акцента */
+  transition: color 0.15s ease; /* плавная смена цвета при hover */
 }
 
 .command-description {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  line-height: 1.4;
-  margin-top: var(--spacing-xs);
+  font-size: 11px; /* компактное описание */
+  font-weight: 400; /* обычная насыщенность шрифта */
+  color: rgba(255, 255, 255, 0.4); /* приглушённый белый */
+  line-height: 1.3; /* плотная, но читаемая межстрочная высота */
+  transition: color 0.15s ease; /* плавная смена цвета при hover */
 }
 
-/* ============================================
-   Подвал
-   ============================================ */
-
+/* Футер */
 .footer {
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border-top: 1px solid rgba(255, 221, 0, 0.1);
-  background: linear-gradient(
-    180deg,
-    rgba(13, 13, 18, 0) 0%,
-    rgba(30, 30, 40, 0.4) 100%
-  );
-  text-align: center;
+  text-align: center; /* содержимое футера по центру */
+  padding-top: 24px; /* отступ сверху для отделения от контента */
+  flex-shrink: 0; /* не даём футеру сжиматься при нехватке места */
 }
 
 .hint {
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
+  font-size: 13px; /* размер шрифта подсказки */
+  color: rgba(255, 255, 255, 0.7); /* немного приглушённый белый */
+  padding: 10px 20px; /* внутренние отступы */
+  background: rgba(30, 30, 40, 0.85); /* тёмный фон бейджа */
+  border-radius: 24px; /* капсула */
+  display: inline-block; /* строчно-блочный, чтобы работали паддинги/бордеры */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* тонкая светлая рамка */
 }
 
-/* ============================================
-   Адаптивность
-   ============================================ */
-
-@media (max-width: 1024px) {
-  .commands {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-
-  .categories {
-    padding: var(--spacing-md) var(--spacing-lg);
-  }
-
-  .content {
-    padding: var(--spacing-lg);
-  }
+/* Скроллбар */
+::-webkit-scrollbar {
+  width: 8px; /* ширина дорожки скроллбара */
+}
+::-webkit-scrollbar-track {
+  background: transparent; /* прозрачный трек (фон дорожки) */
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 221, 0, 0.4); /* цвет ползунка скроллбара */
+  border-radius: 4px; /* скругление углов ползунка */
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 221, 0, 0.6); /* более яркий цвет ползунка при наведении */
 }
 
-@media (max-width: 768px) {
-  :root {
-    --font-size-base: 13px;
-    --font-size-lg: 15px;
-    --spacing-lg: 16px;
-    --spacing-xl: 20px;
-  }
+/* Панель категорий (табы) */
 
+.categories {
+  display: flex; /* используем флекс-контейнер для расположения табов */
+  gap: var(--spacing-md); /* расстояние между элементами табов */
+  align-items: center; /* вертикальное выравнивание по центру */
+  padding: var(--spacing-lg) var(--spacing-xl); /* внутренние отступы: сверху/снизу и слева/справа */
+  border-bottom: 1px solid rgba(255, 221, 0, 0.1); /* тонкая нижняя граница для отделения от контента */
+  overflow-x: auto; /* горизонтальная прокрутка, если табов много */
+  overflow-y: hidden; /* отключаем вертикальную прокрутку */
+  background: linear-gradient(
+    180deg, /* направление градиента сверху вниз */
+    rgba(30, 30, 40, 0.4) 0%, /* лёгкое затемнение сверху */
+    rgba(13, 13, 18, 0) 100% /* плавное исчезновение к прозрачности снизу */
+  );
+
+  /* Скроллбар стиль */
+  scrollbar-width: thin; /* тонкий скроллбар (Firefox) */
+  scrollbar-color: var(--accent-primary) transparent; /* цвет ползунка и трека (Firefox) */
+}
+
+.categories::-webkit-scrollbar {
+  height: 6px; /* высота горизонтального скроллбара (WebKit) */
+}
+
+.categories::-webkit-scrollbar-track {
+  background: transparent; /* прозрачный трек (WebKit) */
+}
+
+.categories::-webkit-scrollbar-thumb {
+  background: var(--accent-primary); /* цвет ползунка скроллбара (WebKit) */
+  border-radius: var(--radius-sm); /* скругление ползунка (WebKit) */
+}
+
+.category-tab {
+  display: flex; /* флекс для иконки и текста */
+  align-items: center; /* вертикальное выравнивание содержимого по центру */
+  gap: var(--spacing-sm); /* расстояние между иконкой и текстом */
+  padding: var(--spacing-sm) var(--spacing-md); /* внутренние отступы кнопки таба */
+  background: var(--bg-secondary); /* вторичный тёмный фон */
+  border: 1px solid var(--border-color); /* тонкая рамка по акцентному цвету */
+  border-radius: var(--radius-md); /* среднее скругление углов */
+  color: var(--text-primary); /* основной цвет текста */
+  font-size: var(--font-size-base); /* базовый размер шрифта */
+  font-weight: 500; /* полужирный, для читаемости */
+  cursor: pointer; /* курсор-рука при наведении */
+  white-space: nowrap; /* предотвращаем перенос текста на следующую строку */
+  transition: all var(--transition-fast); /* плавные переходы состояний */
+}
+
+.category-tab:hover {
+  background: var(--bg-tertiary); /* более светлый фон при наведении */
+  border-color: var(--border-hover); /* усиленная рамка при наведении */
+  color: var(--accent-hover); /* лёгкий акцент на тексте при наведении */
+}
+
+.category-tab.active {
+  background: var(--accent-primary); /* яркий акцентный фон для активного таба */
+  border-color: var(--accent-primary); /* совпадающая акцентная рамка */
+  color: #000; /* контрастный чёрный текст на жёлтом фоне */
+  font-weight: 600; /* немного более жирный шрифт для выделения */
+  box-shadow: 0 0 16px rgba(255, 221, 0, 0.3); /* мягкое свечение вокруг активного таба */
+}
+
+.category-icon {
+  font-size: var(--font-size-xl); /* увеличенный размер для иконки */
+  line-height: 1; /* плотная высота строки для корректного вертикального выравнивания */
+}
+
+.category-name {
+  letter-spacing: 0.3px; /* небольшое расширение межбуквенного интервала для читабельности */
+}
+
+
+/* Основная область с командами */
+
+   .content {
+    flex: 1; /* занимает всё доступное пространство в колонке */
+    overflow-y: auto; /* вертикальная прокрутка при переполнении */
+    padding: var(--spacing-xl); /* внутренние отступы вокруг контента */
+    padding-right: calc(var(--spacing-xl) - 10px); /* уменьшаем справа под ширину скроллбара */
+  }
+  
+  .commands-container {
+    max-width: 1200px; /* ограничиваем максимальную ширину центра */
+    margin: 0 auto; /* центрируем по горизонтали */
+    display: flex; /* вертикальная колонка содержимого */
+    flex-direction: column; /* расположение блоков сверху вниз */
+    gap: var(--spacing-lg); /* вертикальные промежутки между блоками */
+    animation: contentFadeIn var(--transition-normal) ease-out; /* плавное появление контента */
+  }
+  
+  @keyframes contentFadeIn {
+    from {
+      opacity: 0; /* старт: невидимый */
+      transform: translateY(8px); /* лёгкий сдвиг вниз */
+    }
+    to {
+      opacity: 1; /* финал: видимый */
+      transform: translateY(0); /* возвращаемся на место */
+    }
+  }
+  
+  /* Скроллбар для основной области */
+  .content::-webkit-scrollbar {
+    width: 6px; /* тонкий вертикальный скроллбар */
+  }
+  
+  .content::-webkit-scrollbar-track {
+    background: transparent; /* прозрачный трек */
+  }
+  
+  .content::-webkit-scrollbar-thumb {
+    background: rgba(255, 221, 0, 0.3); /* ползунок с мягким акцентом */
+    border-radius: var(--radius-sm); /* небольшое скругление */
+  }
+  
+  .content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 221, 0, 0.5); /* ярче при наведении */
+  }
+  
+
+  /* Группы команд */
+  
+  .group {
+    display: flex; /* контейнер группы */
+    flex-direction: column; /* вертикальное расположение элементов */
+    gap: var(--spacing-md); /* интервалы между элементами в группе */
+  }
+  
+  .group-title {
+    font-size: var(--font-size-lg); /* заметный размер заголовка */
+    font-weight: 600; /* полужирный для акцента */
+    color: var(--text-primary); /* основной цвет текста */
+    text-transform: uppercase; /* заглавные буквы для стиля */
+    letter-spacing: 1px; /* лёгкое расширение межбуквенного интервала */
+    padding-bottom: var(--spacing-sm); /* отступ снизу для визуального разделения */
+    border-bottom: 2px solid var(--accent-primary); /* акцентная линия под заголовком */
+    width: fit-content; /* ширина по содержимому */
+  }
+  
+
+  /* Сетка команд */
+  
   .commands {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: grid; /* сетка карточек команд */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* адаптивные колонки по ширине */
+    gap: var(--spacing-md); /* расстояние между карточками */
   }
+  
 
+  /* Карточка команды */
+  
   .command {
-    padding: var(--spacing-sm);
+    display: flex; /* контейнер карточки */
+    flex-direction: column; /* вертикальная компоновка содержимого */
+    gap: var(--spacing-sm); /* интервалы между элементами внутри */
+    padding: var(--spacing-md); /* внутренние отступы карточки */
+    background: var(--bg-secondary); /* вторичный тёмный фон */
+    border: 1px solid var(--border-color); /* тонкая акцентная рамка */
+    border-radius: var(--radius-md); /* умеренное скругление углов */
+    cursor: pointer; /* интерактивная карточка */
+    transition: all var(--transition-fast); /* плавные переходы состояний */
+    text-align: left; /* выравнивание текста по левому краю */
+    color: var(--text-primary); /* основной цвет текста */
+    font-size: var(--font-size-base); /* базовый размер шрифта */
+  
+    /* Убираем дефолтные стили кнопки */
+    font-family: inherit; /* наследуем семейств шрифта из окружения */
   }
-
+  
+  .command:hover {
+    background: var(--bg-tertiary); /* подсветка фона при наведении */
+    border-color: var(--border-hover); /* усиление акцентной рамки */
+    transform: translateY(-2px); /* лёгкий подъём для живости */
+    box-shadow: 0 8px 24px rgba(255, 221, 0, 0.15); /* мягкая тень со светлым акцентом */
+  }
+  
+  .command:active {
+    transform: scale(0.98); /* лёгкое нажатие/сжатие при клике */
+  }
+  
+  .command-label {
+    font-weight: 600; /* акцент на заголовке команды */
+    font-size: var(--font-size-base); /* базовый размер */
+    color: var(--accent-primary); /* акцентный жёлтый для заголовка */
+    letter-spacing: 0.2px; /* минимальное расширение для читабельности */
+  }
+  
   .command-code {
-    font-size: 11px;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace; /* моноширинный шрифт для кода */
+    font-size: var(--font-size-sm); /* компактный размер */
+    color: var(--code-color); /* цвет для команд/кода */
+    background: rgba(77, 208, 225, 0.1); /* лёгкая подложка для выделения */
+    padding: var(--spacing-xs) var(--spacing-sm); /* внутренние отступы бейджа кода */
+    border-radius: var(--radius-sm); /* небольшое скругление */
+    word-break: break-all; /* перенос длинных слов/команд */
+    white-space: pre-wrap; /* сохраняем переносы, но разрешаем wrap */
+    overflow-x: auto; /* горизонтальная прокрутка, если слишком длинно */
   }
-}
-
-@media (max-width: 480px) {
-  :root {
-    --spacing-md: 12px;
-    --spacing-lg: 12px;
-    --spacing-xl: 16px;
+  
+  .command-description {
+    font-size: var(--font-size-sm); /* компактное описание */
+    color: var(--text-secondary); /* приглушённый текст */
+    line-height: 1.4; /* комфортная межстрочная высота */
+    margin-top: var(--spacing-xs); /* небольшой отступ сверху от кода/лейбла */
   }
-
-  .categories {
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
-  }
-
-  .content {
-    padding: var(--spacing-lg);
-  }
-
-  .commands {
-    grid-template-columns: 1fr;
-  }
-
+  
+  /* Подвал */
+  
   .footer {
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-xl); /* внутренние отступы футера */
+    border-top: 1px solid rgba(255, 221, 0, 0.1); /* тонкая верхняя граница */
+    background: linear-gradient(
+      180deg, /* направление градиента сверху вниз */
+      rgba(13, 13, 18, 0) 0%, /* прозрачность сверху */
+      rgba(30, 30, 40, 0.4) 100% /* лёгкое затемнение снизу */
+    );
+    text-align: center; /* центрируем содержимое футера */
   }
-}
+  
+  .hint {
+    font-size: var(--font-size-sm); /* небольшой размер текста подсказки */
+    color: var(--text-muted); /* приглушённый цвет текста */
+    letter-spacing: 0.5px; /* немного увеличиваем межбуквенный интервал */
+  }
+  
+/* Адаптивность */
 
-/* ============================================
-   Улучшения для macOS
-   ============================================ */
+   @media (max-width: 1024px) {
+    .commands {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* уменьшаем минимальную ширину карточек для более плотной сетки */
+    }
+  
+    .categories {
+      padding: var(--spacing-md) var(--spacing-lg); /* сокращаем внутренние отступы панели категорий */
+    }
+  
+    .content {
+      padding: var(--spacing-lg); /* уменьшаем отступы контента */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    :root {
+      --font-size-base: 13px; /* немного уменьшаем базовый размер шрифта */
+      --font-size-lg: 15px; /* корректируем крупный размер для заголовков */
+      --spacing-lg: 16px; /* уменьшаем большие отступы */
+      --spacing-xl: 20px; /* уменьшаем очень большие отступы */
+    }
+  
+    .commands {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* ещё более компактные карточки в сетке */
+    }
+  
+    .command {
+      padding: var(--spacing-sm); /* уменьшаем внутренние отступы карточек */
+    }
+  
+    .command-code {
+      font-size: 11px; /* уменьшаем размер шрифта блока кода */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    :root {
+      --spacing-md: 12px; /* ещё меньше средние отступы */
+      --spacing-lg: 12px; /* маленькие большие отступы */
+      --spacing-xl: 16px; /* уменьшенные очень большие отступы */
+    }
+  
+    .categories {
+      gap: var(--spacing-sm); /* уменьшаем промежутки между табами */
+      padding: var(--spacing-md) var(--spacing-lg); /* компактные отступы панели категорий */
+    }
+  
+    .content {
+      padding: var(--spacing-lg); /* компактные отступы контента */
+    }
+  
+    .commands {
+      grid-template-columns: 1fr; /* одна колонка — вертикальный список карточек */
+    }
+  
+    .footer {
+      padding: var(--spacing-md) var(--spacing-lg); /* компактные отступы футера */
+    }
+  }
+  
 
-/* Кастомный скроллбар для WebKit (Safari/macOS) */
-::-webkit-scrollbar-button {
-  display: none;
-}
-
-/* Плавность для macOS */
-* {
-  -webkit-font-smoothing: antialiased;
-  -webkit-backface-visibility: hidden;
-}
-
-/* ============================================
-   Focus стили для доступности
-   ============================================ */
-
-.category-tab:focus,
-.command:focus {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
-}
-
-/* Убираем focus ring в Safari при клике мышкой */
-.category-tab:focus:not(:focus-visible),
-.command:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* Пытаемся ховера сделать через js, ну а што?*/
-.command.hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 221, 0, 0.15);
-}
-
+  /* Улучшения для macOS */
+  
+  /* Кастомный скроллбар для WebKit (Safari/macOS) */
+  ::-webkit-scrollbar-button {
+    display: none; /* скрываем кнопки прокрутки на концах трека */
+  }
+  
+  /* Плавность для macOS */
+  * {
+    -webkit-font-smoothing: antialiased; /* сглаживание шрифтов для более чёткого рендера */
+    -webkit-backface-visibility: hidden; /* предотвращаем артефакты при 3D-трансформациях */
+  }
+  
+  /* Focus стили для доступности */
+  
+  .category-tab:focus,
+  .command:focus {
+    outline: 2px solid var(--accent-primary); /* видимая рамка фокуса по акцентному цвету */
+    outline-offset: 2px; /* отступ рамки от элемента для лучшей видимости */
+  }
+  
+  /* Убираем focus ring в Safari при клике мышкой */
+  .category-tab:focus:not(:focus-visible),
+  .command:focus:not(:focus-visible) {
+    outline: none; /* убираем фокус-рамку, если фокус не клавиатурный */
+  }
+  
+  /* Пытаемся ховера сделать через js, ну а што?*/
+  .command.hover {
+    background: var(--bg-tertiary); /* фон как при hover состоянии */
+    border-color: var(--border-hover); /* усиленная рамка как при hover */
+    transform: translateY(-2px); /* лёгкий подъём карточки */
+    box-shadow: 0 8px 24px rgba(255, 221, 0, 0.15); /* мягкая тень со светлым акцентом */
+  }
+  
 /* В режиме редактирования JS hover переопределяется */
 .overlay.edit-mode .command.hover {
-  border-color: var(--accent-primary) !important;
-  background: rgba(255, 221, 0, 0.1) !important;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(255, 221, 0, 0.3);
+  border-color: var(--accent-primary) !important; /* подчёркиваем рамку акцентным цветом поверх любых правил */
+  background: rgba(255, 221, 0, 0.1) !important; /* лёгкое акцентное подсвечивание фона */
+  transform: translateY(-2px) scale(1.02); /* поднимаем и слегка увеличиваем карточку для «живости» */
+  box-shadow: 0 8px 24px rgba(255, 221, 0, 0.3); /* усиливаем тень при hover в edit-режиме */
 }
 
 .category-tab.hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  color: var(--accent-hover);
+  background: var(--bg-tertiary); /* фон как при обычном hover */
+  border-color: var(--border-hover); /* усиленная рамка */
+  color: var(--accent-hover); /* лёгкий акцент текста */
 }
 
-/* ============================================
-   Режим редактирования
-   ============================================ */
+
+/* Режим редактирования */
 
 /* Индикатор режима редактирования */
 .edit-mode-indicator {
-  position: fixed;
-  top: var(--spacing-lg);
-  right: var(--spacing-lg);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  align-items: flex-end;
-  animation: editModeIndicatorIn var(--transition-normal) ease-out;
+  position: fixed; /* фиксируем индикатор поверх интерфейса */
+  top: var(--spacing-lg); /* отступ сверху */
+  right: var(--spacing-lg); /* отступ справа */
+  z-index: 1000; /* высокий слой, чтобы быть поверх всего */
+  display: flex; /* флекс-контейнер для вертикальной компоновки */
+  flex-direction: column; /* расположение элементов сверху вниз */
+  gap: var(--spacing-xs); /* маленькие интервалы между элементами */
+  align-items: flex-end; /* выравниваем элементы по правому краю */
+  animation: editModeIndicatorIn var(--transition-normal) ease-out; /* плавное появление индикатора */
 }
 
 @keyframes editModeIndicatorIn {
   from {
-    opacity: 0;
-    transform: translateY(-8px);
+    opacity: 0; /* старт: невидимый */
+    transform: translateY(-8px); /* лёгкий сдвиг вверх */
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1; /* финал: видимый */
+    transform: translateY(0); /* возвращаемся на место */
   }
 }
 
 .edit-mode-badge {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--accent-primary);
-  color: #000;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4);
-  animation: editModePulse 2s ease-in-out infinite;
+  display: flex; /* флекс для иконки и текста */
+  align-items: center; /* вертикальное выравнивание по центру */
+  gap: var(--spacing-sm); /* расстояние между иконкой и текстом */
+  padding: var(--spacing-sm) var(--spacing-md); /* внутренние отступы бейджа */
+  background: var(--accent-primary); /* яркий акцентный фон бейджа */
+  color: #000; /* контрастный текст на жёлтом фоне */
+  border-radius: var(--radius-md); /* скруглённые углы бейджа */
+  font-size: var(--font-size-sm); /* компактный размер шрифта */
+  font-weight: 600; /* выразительный вес шрифта */
+  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4); /* мягкая тень с акцентным цветом */
+  animation: editModePulse 2s ease-in-out infinite; /* пульсирующая анимация для внимания */
 }
 
 @keyframes editModePulse {
   0%, 100% {
-    box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4); /* базовая тень на краях цикла */
   }
   50% {
-    box-shadow: 0 4px 20px rgba(255, 221, 0, 0.7);
+    box-shadow: 0 4px 20px rgba(255, 221, 0, 0.7); /* усиление тени на пике пульсации */
   }
 }
 
 .edit-mode-icon {
-  font-size: var(--font-size-base);
-  line-height: 1;
+  font-size: var(--font-size-base); /* размер иконки в бейдже */
+  line-height: 1; /* плотная высота строки для аккуратного выравнивания */
 }
 
 .edit-mode-text {
-  letter-spacing: 0.3px;
+  letter-spacing: 0.3px; /* небольшое расширение межбуквенного интервала */
 }
 
 .edit-mode-hint {
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  background: rgba(30, 30, 40, 0.8);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--font-size-sm); /* небольшой размер текста подсказки */
+  color: var(--text-muted); /* приглушённый цвет текста */
+  background: rgba(30, 30, 40, 0.8); /* тёмная подложка для контраста */
+  padding: var(--spacing-xs) var(--spacing-sm); /* компактные внутренние отступы */
+  border-radius: var(--radius-sm); /* небольшое скругление */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* тонкая светлая рамка */
 }
 
 /* Изменения в режиме редактирования */
 .overlay.edit-mode {
   /* Лёгкое подсвечивание всего оверлея */
-  animation: editModeGlow 3s ease-in-out infinite;
+  animation: editModeGlow 3s ease-in-out infinite; /* мягкое «дыхание» интерфейса */
 }
 
 @keyframes editModeGlow {
   0%, 100% {
-    filter: none;
+    filter: none; /* без изменений в начале и конце цикла */
   }
   50% {
-    filter: brightness(1.05);
+    filter: brightness(1.05); /* лёгкое повышение яркости на середине цикла */
   }
 }
 
 /* Команды в режиме редактирования */
 .overlay.edit-mode .command {
-  cursor: pointer !important;
+  cursor: pointer !important; /* явно интерактивные элементы в edit-режиме */
   border-style: dashed; /* Пунктирная рамка как сигнал редактирования */
-  position: relative;
+  position: relative; /* для позиционирования псевдоэлемента ✏️ */
 }
 
 .overlay.edit-mode .command:before {
-  content: "✏️";
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  font-size: 12px;
-  opacity: 0.7;
-  transition: all var(--transition-fast);
+  content: "✏️"; /* метка редактирования в виде иконки */
+  position: absolute; /* абсолютное позиционирование внутри карточки */
+  top: 4px; /* отступ сверху */
+  right: 8px; /* отступ справа */
+  font-size: 12px; /* размер иконки */
+  opacity: 0.7; /* полупрозрачность по умолчанию */
+  transition: all var(--transition-fast); /* плавное изменение при hover */
 }
 
 .overlay.edit-mode .command:hover {
-  border-color: var(--accent-primary) !important;
-  background: rgba(255, 221, 0, 0.1) !important;
-  transform: translateY(-2px) scale(1.02);
+  border-color: var(--accent-primary) !important; /* акцентная рамка при наведении */
+  background: rgba(255, 221, 0, 0.1) !important; /* лёгкий акцент на фоне */
+  transform: translateY(-2px) scale(1.02); /* поднимаем и чуть увеличиваем карточку */
 }
 
 .overlay.edit-mode .command:hover:before {
-  opacity: 1;
-  transform: scale(1.2);
+  opacity: 1; /* делаем иконку более заметной */
+  transform: scale(1.2); /* увеличиваем иконку при hover */
 }
 
 /* Категории в режиме редактирования */
 .overlay.edit-mode .category-tab {
-  border-style: dashed;
+  border-style: dashed; /* пунктирная рамка как признак редактируемости */
 }
 
 .overlay.edit-mode .category-tab:hover {
-  border-color: var(--accent-primary) !important;
-  background: rgba(255, 221, 0, 0.1) !important;
+  border-color: var(--accent-primary) !important; /* акцентируем рамку при hover */
+  background: rgba(255, 221, 0, 0.1) !important; /* лёгкое акцентное подсвечивание фона */
 }
 
-/* Мобильная адаптация для режима редактирования */
-@media (max-width: 768px) {
-  .edit-mode-indicator {
-    top: var(--spacing-md);
-    right: var(--spacing-md);
-  }
-  
-  .edit-mode-badge {
-    padding: var(--spacing-xs) var(--spacing-sm);
-  }
-  
-  .edit-mode-text {
-    display: none; /* На маленьких экранах показываем только иконку */
-  }
-}
 
-/* ============================================
-   Автодополнение команд
-   ============================================ */
+/* Автодополнение команд */
 
 /* Контейнер автодополнения */
 .autocomplete-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
+  position: relative; /* контейнер для абсолютного позиционирования подсказки */
+  display: inline-block; /* ведёт себя как строчно-блочный, чтобы входить в поток */
+  width: 100%; /* растягиваем по ширине родителя */
 }
-
 /* Inline подсказка */
 .autocomplete-suggestion {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-family: inherit;
-  font-size: var(--font-size-base);
-  color: var(--text-muted);
-  opacity: 0.4;
-  white-space: pre;
-  padding: var(--spacing-md);
-  padding-left: calc(var(--spacing-md) + 2px); /* Отступ для курсора */
-  display: none;
-  z-index: 1;
-  transition: opacity var(--transition-fast);
+  position: absolute; /* позиционируем поверх поля ввода */
+  top: 50%; /* вертикальный центр относительно контейнера */
+  left: 0; /* прижимаем к левому краю */
+  transform: translateY(-50%); /* точное центрирование по вертикали */
+  pointer-events: none; /* подсказка не перехватывает события мыши */
+  font-family: inherit; /* наследуем семейство шрифта (будет переопределено ниже) */
+  font-size: var(--font-size-base); /* базовый размер шрифта */
+  color: var(--text-muted); /* приглушённый цвет текста подсказки */
+  opacity: 0.4; /* полупрозрачная подсказка */
+  white-space: pre; /* сохраняем пробелы и переносы как есть */
+  padding: var(--spacing-md); /* внутренние отступы подсказки */
+  padding-left: calc(var(--spacing-md) + 2px); /* небольшой сдвиг под курсор */
+  display: none; /* скрыта по умолчанию */
+  z-index: 1; /* над фоном, но под полем ввода */
+  transition: opacity var(--transition-fast); /* плавное изменение прозрачности */
   
   /* Моноширинный шрифт для точного выравнивания */
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-  letter-spacing: 0;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace; /* моноширинный для предсказуемой ширины символов */
+  letter-spacing: 0; /* без дополнительного расстояния между буквами */
 }
 
 /* Стиль поля команды при автодополнении */
 .autocomplete-container .form-input {
-  position: relative;
-  z-index: 2;
-  background: rgba(var(--bg-secondary-rgb, 30, 30, 40), 0.9) !important;
+  position: relative; /* создаём контекст для абсолютной подсказки */
+  z-index: 2; /* поле выше подсказки, чтобы текст был поверх */
+  background: rgba(var(--bg-secondary-rgb, 30, 30, 40), 0.9) !important; /* тёмная подложка, принудительно */
   
   /* Моноширинный шрифт для поля команд */
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace; /* для точного совпадения с подсказкой */
 }
 
 .autocomplete-container .form-input:focus {
-  background: rgba(45, 45, 60, 0.95) !important;
+  background: rgba(45, 45, 60, 0.95) !important; /* более контрастный фон при фокусе */
 }
 
 /* Анимация появления подсказки */
 .autocomplete-suggestion.visible {
-  opacity: 0.4;
-  animation: suggestFadeIn var(--transition-fast) ease-out;
+  opacity: 0.4; /* делаем видимой (совпадает с базовой прозрачностью) */
+  animation: suggestFadeIn var(--transition-fast) ease-out; /* лёгкое появление и смещение */
 }
 
 @keyframes suggestFadeIn {
   from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(-2px);
+    opacity: 0; /* невидимая в начале */
+    transform: translateY(-50%) translateX(-2px); /* слегка сдвинута влево */
   }
   to {
-    opacity: 0.4;
-    transform: translateY(-50%) translateX(0);
+    opacity: 0.4; /* видимая */
+    transform: translateY(-50%) translateX(0); /* возвращаемся в исходную позицию */
   }
 }
 
 /* Подсветка при навигации стрелками */
 .autocomplete-suggestion.highlighted {
-  opacity: 0.6;
-  color: var(--accent-primary);
-  text-shadow: 0 0 4px rgba(255, 221, 0, 0.3);
+  opacity: 0.6; /* немного ярче для выделения */
+  color: var(--accent-primary); /* акцентный цвет текста */
+  text-shadow: 0 0 4px rgba(255, 221, 0, 0.3); /* мягкое свечение */
 }
 
 /* Индикатор количества вариантов */
 .autocomplete-suggestion[data-indicator]::after {
-  content: attr(data-indicator);
-  color: var(--text-muted);
-  opacity: 0.7;
-  font-size: var(--font-size-sm);
-  margin-left: var(--spacing-sm);
-  font-weight: 400;
+  content: attr(data-indicator); /* вставляем количество вариантов из атрибута */
+  color: var(--text-muted); /* приглушённый текст */
+  opacity: 0.7; /* полупрозрачность */
+  font-size: var(--font-size-sm); /* компактный размер */
+  margin-left: var(--spacing-sm); /* отступ слева от основного текста */
+  font-weight: 400; /* обычная насыщенность */
 }
 
 /* Адаптивность для мобильных */
 @media (max-width: 768px) {
   .autocomplete-suggestion {
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-sm);
-    padding-left: calc(var(--spacing-sm) + 2px);
+    font-size: var(--font-size-sm); /* подсказка компактнее на мобильных */
+    padding: var(--spacing-sm); /* уменьшенные отступы */
+    padding-left: calc(var(--spacing-sm) + 2px); /* корректируем левый отступ */
   }
   
   .autocomplete-container .form-input {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-sm); /* поле ввода компактнее на мобильных */
   }
 }
 
 /* Состояние загрузки словаря */
 .autocomplete-container.loading::after {
-  content: '⏳';
-  position: absolute;
-  right: var(--spacing-md);
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.5;
-  animation: pulse 1.5s ease-in-out infinite;
+  content: '⏳'; /* индикатор загрузки в виде эмодзи */
+  position: absolute; /* позиционируем внутри контейнера */
+  right: var(--spacing-md); /* прижимаем к правому краю */
+  top: 50%; /* центр по вертикали */
+  transform: translateY(-50%); /* точное центрирование */
+  opacity: 0.5; /* полупрозрачный индикатор */
+  animation: pulse 1.5s ease-in-out infinite; /* мягкая пульсация */
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.5; } /* базовая прозрачность на краях цикла */
+  50% { opacity: 1; } /* ярче на пике пульсации */
 }
 
-/* ============================================
-   Модальное окно редактирования команды
-   ============================================ */
+
+/* Модальное окно редактирования команды */
 
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-lg);
+  position: fixed; /* поверх всего окна */
+  inset: 0; /* растягиваем на весь экран */
+  z-index: 9999; /* максимально высоко над интерфейсом */
+  background: rgba(0, 0, 0, 0.85); /* тёмная полупрозрачная подложка */
+  backdrop-filter: blur(8px); /* размытие фона для «стеклянного» эффекта */
+  -webkit-backdrop-filter: blur(8px); /* поддержка в Safari */
+  display: flex; /* флекс для центрирования модального окна */
+  align-items: center; /* вертикальное центрирование */
+  justify-content: center; /* горизонтальное центрирование */
+  padding: var(--spacing-lg); /* внутренние отступы контейнера */
   
   /* Изначально скрыто */
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-normal) ease-out;
+  opacity: 0; /* невидимое при старте */
+  visibility: hidden; /* скрыто для кликов и фокуса */
+  transition: all var(--transition-normal) ease-out; /* плавное появление/исчезновение */
 }
 
 .modal-overlay.visible {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1; /* делаем видимым */
+  visibility: visible; /* включаем для взаимодействия */
 }
 
 .modal {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
+  background: var(--bg-primary); /* основной тёмный фон модалки */
+  border: 1px solid var(--border-color); /* тонкая акцентная рамка */
+  border-radius: var(--radius-lg); /* заметное скругление углов */
+  width: 100%; /* растягиваем по доступной ширине контейнера */
+  max-width: 500px; /* ограничиваем максимальную ширину */
+  max-height: 90vh; /* ограничиваем высоту, чтобы не выходить за экран */
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.6),
-    0 0 30px rgba(255, 221, 0, 0.1);
+    0 20px 40px rgba(0, 0, 0, 0.6), /* основная глубокая тень */
+    0 0 30px rgba(255, 221, 0, 0.1); /* лёгкое акцентное свечение */
   
   /* Анимация появления */
-  transform: translateY(20px) scale(0.95);
-  transition: all var(--transition-normal) ease-out;
+  transform: translateY(20px) scale(0.95); /* начальное смещение и лёгкое уменьшение */
+  transition: all var(--transition-normal) ease-out; /* плавная анимация входа */
   
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: flex; /* флекс-контейнер */
+  flex-direction: column; /* вертикальная компоновка шапки/тела/футера */
+  overflow: hidden; /* обрезаем выходящее содержимое по краям */
 }
 
 .modal-overlay.visible .modal {
-  transform: translateY(0) scale(1);
+  transform: translateY(0) scale(1); /* завершаем анимацию: возвращаем на место и масштаб 1 */
 }
 
 /* Заголовок модального окна */
 .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--border-color);
+  display: flex; /* флекс-контейнер для шапки */
+  align-items: center; /* вертикальное выравнивание по центру */
+  justify-content: space-between; /* заголовок слева, кнопка закрытия справа */
+  padding: var(--spacing-lg); /* внутренние отступы шапки */
+  border-bottom: 1px solid var(--border-color); /* тонкая нижняя граница */
   background: linear-gradient(
-    135deg,
-    rgba(30, 30, 40, 0.95) 0%,
-    rgba(45, 45, 60, 0.8) 100%
-  );
+    135deg, /* диагональный градиент */
+    rgba(30, 30, 40, 0.95) 0%, /* тёмный цвет в начале */
+    rgba(45, 45, 60, 0.8) 100% /* чуть светлее к концу */
+  ); /* декоративный фон шапки */
 }
 
 .modal-header h2 {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
+  font-size: var(--font-size-xl); /* крупный заголовок */
+  font-weight: 600; /* полужирный для акцента */
+  color: var(--text-primary); /* основной цвет текста */
+  margin: 0; /* убираем внешние отступы по умолчанию */
 }
 
 .modal-close {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 20px;
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
+  background: none; /* без фона в нормальном состоянии */
+  border: none; /* без рамки */
+  color: var(--text-secondary); /* приглушённый цвет иконки */
+  font-size: 20px; /* размер символа ✕ */
+  cursor: pointer; /* курсор-рука */
+  padding: var(--spacing-xs); /* небольшие внутренние отступы */
+  border-radius: var(--radius-sm); /* лёгкое скругление для hover-фона */
+  transition: all var(--transition-fast); /* плавные изменения состояний */
+  display: flex; /* центрируем иконку внутри */
+  align-items: center; /* вертикальное центрирование */
+  justify-content: center; /* горизонтальное центрирование */
+  width: 32px; /* фиксированная ширина кнопки */
+  height: 32px; /* фиксированная высота кнопки */
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1); /* лёгкий подсвет фона при hover */
+  color: var(--text-primary); /* более контрастный цвет иконки */
+  transform: scale(1.1); /* небольшое увеличение при наведении */
 }
 
 /* Тело модального окна */
 .modal-body {
-  flex: 1;
-  padding: var(--spacing-lg);
-  overflow-y: auto;
+  flex: 1; /* занимает доступное пространство между шапкой и футером */
+  padding: var(--spacing-lg); /* внутренние отступы тела */
+  overflow-y: auto; /* вертикальная прокрутка при переполнении */
 }
 
 /* Группы полей формы */
 .form-group {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg); /* отступ снизу между группами */
 }
 
 .form-group:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0; /* у последней группы отступ не нужен */
 }
 
 /* Лейблы */
 .form-label {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-sm);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  color: var(--text-primary);
+  display: flex; /* горизонтальная компоновка элементов лейбла */
+  align-items: center; /* выравнивание по вертикали */
+  gap: var(--spacing-xs); /* небольшой промежуток между элементами */
+  margin-bottom: var(--spacing-sm); /* отступ снизу от лейбла до поля */
+  font-size: var(--font-size-base); /* базовый размер шрифта */
+  font-weight: 500; /* полужирный для читабельности */
+  color: var(--text-primary); /* основной цвет текста */
 }
 
 .form-label-text {
-  letter-spacing: 0.3px;
+  letter-spacing: 0.3px; /* небольшое расширение межбуквенного интервала */
 }
 
 .form-label-required {
-  color: #ff6b6b;
-  font-weight: 600;
+  color: #ff6b6b; /* цвет индикатора обязательности */
+  font-weight: 600; /* акцент на маркере */
 }
 
 .form-label-coming-soon {
-  background: var(--accent-primary);
-  color: #000;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  margin-left: auto;
+  background: var(--accent-primary); /* акцентный фон бейджа */
+  color: #000; /* контрастный текст */
+  font-size: 10px; /* компактный размер */
+  font-weight: 600; /* плотный вес шрифта для заметности */
+  text-transform: uppercase; /* капс для бейджа */
+  letter-spacing: 0.5px; /* увеличенный кернинг */
+  padding: 2px 6px; /* внутренние отступы бейджа */
+  border-radius: 8px; /* компактное скругление */
+  margin-left: auto; /* уводим бейдж к правому краю */
 }
 
 /* Поля ввода */
 .form-input,
 .form-textarea {
-  width: 100%;
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--font-size-base);
-  font-family: inherit;
-  transition: all var(--transition-fast);
-  resize: none;
+  width: 100%; /* на полную ширину контейнера */
+  padding: var(--spacing-md); /* внутренние отступы */
+  background: var(--bg-secondary); /* тёмная подложка полей */
+  border: 2px solid var(--border-color); /* заметная рамка */
+  border-radius: var(--radius-md); /* скруглённые углы */
+  color: var(--text-primary); /* основной цвет текста */
+  font-size: var(--font-size-base); /* базовый размер шрифта */
+  font-family: inherit; /* наследуем семейство шрифта */
+  transition: all var(--transition-fast); /* плавные изменения состояний */
+  resize: none; /* запрещаем ресайз (особенно для textarea) */
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  background: rgba(45, 45, 60, 0.8);
-  box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.2);
+  outline: none; /* убираем системный фокус */
+  border-color: var(--accent-primary); /* акцент на рамке при фокусе */
+  background: rgba(45, 45, 60, 0.8); /* чуть более светлый фон при фокусе */
+  box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.2); /* мягкое внешнее свечение */
 }
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: var(--text-muted);
+  color: var(--text-muted); /* приглушённые плейсхолдеры */
 }
 
 /* Textarea специфичные стили */
 .form-textarea {
-  min-height: 80px;
-  line-height: 1.4;
+  min-height: 80px; /* минимальная высота под несколько строк */
+  line-height: 1.4; /* комфортная межстрочная высота */
 }
 
 /* Placeholder поля (будущие функции) */
 .form-group-placeholder {
-  opacity: 0.6;
-  position: relative;
+  opacity: 0.6; /* визуально приглушаем блок как «неактивный» */
+  position: relative; /* для потенциальных псевдоэлементов или абсолютных элементов внутри */
 }
 
 .form-label-placeholder {
-  opacity: 0.8;
+  opacity: 0.8; /* чуть менее приглушённый чем поле */
 }
 
 .form-input-placeholder {
-  padding: var(--spacing-md);
-  background: rgba(30, 30, 40, 0.4);
-  border: 2px dashed var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  font-size: var(--font-size-base);
-  font-style: italic;
-  display: flex;
-  align-items: center;
+  padding: var(--spacing-md); /* внутренние отступы подложки */
+  background: rgba(30, 30, 40, 0.4); /* полупрозрачная тёмная подложка */
+  border: 2px dashed var(--border-color); /* пунктирная рамка как признак заглушки */
+  border-radius: var(--radius-md); /* скруглённые углы */
+  color: var(--text-muted); /* приглушённый текст заглушки */
+  font-size: var(--font-size-base); /* базовый размер */
+  font-style: italic; /* курсив для дополнительного отличия */
+  display: flex; /* центрирование текста по вертикали */
+  align-items: center; /* выравнивание текста по вертикали */
 }
 
 /* Футер модального окна */
 .modal-footer {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: flex-end;
-  padding: var(--spacing-lg);
-  border-top: 1px solid var(--border-color);
-  background: rgba(30, 30, 40, 0.5);
+  display: flex; /* горизонтальная компоновка кнопок */
+  gap: var(--spacing-md); /* расстояние между кнопками */
+  justify-content: flex-end; /* выравниваем кнопки вправо */
+  padding: var(--spacing-lg); /* внутренние отступы футера */
+  border-top: 1px solid var(--border-color); /* верхняя разделительная линия */
+  background: rgba(30, 30, 40, 0.5); /* полупрозрачная подложка футера */
 }
 
 /* Кнопки */
 .btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 100px;
-  font-family: inherit;
-  letter-spacing: 0.3px;
+  padding: var(--spacing-sm) var(--spacing-lg); /* вертикальные/горизонтальные отступы */
+  border: none; /* без рамки по умолчанию */
+  border-radius: var(--radius-md); /* скруглённые углы кнопки */
+  font-size: var(--font-size-base); /* базовый размер текста */
+  font-weight: 500; /* полужирный для читаемости */
+  cursor: pointer; /* курсор-рука */
+  transition: all var(--transition-fast); /* плавные изменения состояний */
+  min-width: 100px; /* минимальная ширина, чтобы кнопки выглядели ровно */
+  font-family: inherit; /* наследуем семейство шрифта */
+  letter-spacing: 0.3px; /* слегка увеличиваем межбуквенный интервал */
 }
 
 .btn-secondary {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background: var(--bg-secondary); /* тёмный фон для вторичной кнопки */
+  color: var(--text-primary); /* светлый текст на тёмном фоне */
+  border: 1px solid var(--border-color); /* тонкая рамка для структуры */
 }
 
 .btn-secondary:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  transform: translateY(-1px);
+  background: var(--bg-tertiary); /* чуть светлее при наведении */
+  border-color: var(--border-hover); /* усиление рамки при hover */
+  transform: translateY(-1px); /* лёгкий подъём */
 }
 
 .btn-primary {
-  background: var(--accent-primary);
-  color: #000;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3);
+  background: var(--accent-primary); /* акцентный жёлтый фон */
+  color: #000; /* контрастный чёрный текст */
+  font-weight: 600; /* чуть более жирный для акцента */
+  box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3); /* мягкая тень с акцентным цветом */
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4);
+  background: var(--accent-hover); /* более яркий жёлтый при наведении */
+  transform: translateY(-1px); /* лёгкий подъём */
+  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4); /* усиленная тень при hover */
 }
 
 .btn-primary:active {
-  transform: scale(0.98);
-}
-
-/* Мобильная адаптация модального окна */
-@media (max-width: 768px) {
-  .modal {
-    max-width: 90vw;
-    margin: var(--spacing-md);
-  }
-  
-  .modal-header,
-  .modal-body,
-  .modal-footer {
-    padding: var(--spacing-md);
-  }
-  
-  .modal-footer {
-    flex-direction: column;
-  }
-  
-  .btn {
-    width: 100%;
-  }
+  transform: scale(0.98); /* микро-сжатие при нажатии */
 }
 
 /* Анимация закрытия */
 .modal-overlay.closing {
-opacity: 0;
-transition: all 200ms ease-in;
+  opacity: 0; /* плавно скрываем оверлей */
+  transition: all 200ms ease-in; /* скорость и кривая анимации скрытия оверлея */
 }
 
 .modal-overlay.closing .modal {
-transform: translateY(-20px) scale(0.95);
-transition: all 200ms ease-in;
+  transform: translateY(-20px) scale(0.95); /* сдвигаем вверх и слегка уменьшаем модалку при закрытии */
+  transition: all 200ms ease-in; /* скорость и кривая анимации модалки */
 }
 
-/* ============================================
-   Кастомные селекты
-   ============================================ */
+/* Кастомные селекты */
 
 .custom-select {
-  position: relative;
-  width: 100%;
+  position: relative; /* создаём контекст для позиционирования выпадающего списка */
+  width: 100%; /* селект занимает всю доступную ширину */
 }
 
 .custom-select-button {
-  width: 100%;
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--font-size-base);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  position: relative;
+  width: 100%; /* кнопка на всю ширину контейнера */
+  padding: var(--spacing-md); /* внутренние отступы для комфортного клика */
+  background: var(--bg-secondary); /* тёмная подложка кнопки */
+  border: 2px solid var(--border-color); /* заметная рамка по акцентной палитре */
+  border-radius: var(--radius-md); /* скруглённые углы */
+  color: var(--text-primary); /* светлый текст */
+  font-size: var(--font-size-base); /* базовый размер шрифта */
+  font-family: inherit; /* наследуем семейство шрифта */
+  text-align: left; /* выравнивание текста по левому краю */
+  cursor: pointer; /* курсор-рука */
+  transition: all var(--transition-fast); /* плавные изменения состояний */
+  display: flex; /* флекс для значения и стрелки */
+  align-items: center; /* вертикальное выравнивание по центру */
+  justify-content: space-between; /* текст слева, стрелка справа */
+  gap: var(--spacing-md); /* небольшой интервал между содержимыми */
+  position: relative; /* для потенциальных псевдоэлементов/иконок */
 }
 
 .custom-select-button:hover:not(:disabled) {
-  border-color: var(--border-hover);
-  background: rgba(45, 45, 60, 0.8);
+  border-color: var(--border-hover); /* усиливаем рамку при наведении */
+  background: rgba(45, 45, 60, 0.8); /* немного светлее фон при hover */
 }
 
 .custom-select-button:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.2);
+  outline: none; /* убираем системный outline */
+  border-color: var(--accent-primary); /* акцентируем рамку при фокусе */
+  box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.2); /* мягкое внешнее свечение */
 }
 
 .custom-select-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: rgba(20, 20, 30, 0.6);
+  opacity: 0.5; /* приглушаем неактивную кнопку */
+  cursor: not-allowed; /* недоступный курсор */
+  background: rgba(20, 20, 30, 0.6); /* более тёмный фон для disabled состояния */
 }
 
 .custom-select-value {
-  flex: 1;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex: 1; /* занимает доступное пространство слева */
+  text-align: left; /* текст по левому краю */
+  overflow: hidden; /* скрываем переполнение текста */
+  text-overflow: ellipsis; /* многоточие для длинных значений */
+  white-space: nowrap; /* не переносим строку */
 }
 
 .custom-select-arrow {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  transition: transform var(--transition-fast);
+  font-size: var(--font-size-sm); /* компактная стрелка */
+  color: var(--text-secondary); /* приглушённый цвет стрелки */
+  transition: transform var(--transition-fast); /* плавное вращение */
 }
 
 .custom-select.open .custom-select-arrow {
-  transform: rotate(180deg);
+  transform: rotate(180deg); /* переворачиваем стрелку вверх при открытом списке */
 }
 
 /* Выпадающий список */
 .custom-select-options {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--bg-primary);
-  border: 2px solid var(--border-color);
-  border-top: none;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: absolute; /* позиционируем относительно .custom-select */
+  top: 100%; /* непосредственно под кнопкой */
+  left: 0; /* растягиваем от левого края */
+  right: 0; /* до правого края */
+  z-index: 1000; /* поверх соседних элементов */
+  background: var(--bg-primary); /* основной тёмный фон списка */
+  border: 2px solid var(--border-color); /* заметная рамка */
+  border-top: none; /* убираем верхнюю границу для визуальной слитности с кнопкой */
+  border-radius: 0 0 var(--radius-md) var(--radius-md); /* скругляем только нижние углы */
+  max-height: 200px; /* ограничиваем высоту списка */
+  overflow-y: auto; /* вертикальная прокрутка при переполнении */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* мягкая тень под списком */
   
   /* Скрыт по умолчанию */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px);
-  transition: all var(--transition-fast);
+  opacity: 0; /* невидим */
+  visibility: hidden; /* скрыт для кликов и фокуса */
+  transform: translateY(-4px); /* чуть выше начальной позиции для плавного входа */
+  transition: all var(--transition-fast); /* плавное появление */
 }
 
 .custom-select.open .custom-select-options {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+  opacity: 1; /* делаем видимым */
+  visibility: visible; /* включаем взаимодействие */
+  transform: translateY(0); /* возвращаем в нормальную позицию */
 }
 
 .custom-select-option {
-  padding: var(--spacing-md);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  color: var(--text-primary);
-  transition: all var(--transition-fast);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  width: 100%;
-  text-align: left;
-  font-family: inherit;
+  padding: var(--spacing-md); /* комфортные отступы для кликабельной области */
+  cursor: pointer; /* курсор-рука */
+  font-size: var(--font-size-base); /* базовый размер текста */
+  color: var(--text-primary); /* светлый текст */
+  transition: all var(--transition-fast); /* плавные изменения состояний */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* тонкая разделительная линия между опциями */
+  display: flex; /* флекс для возможных иконок и текста */
+  align-items: center; /* вертикальное выравнивание содержимого */
+  gap: var(--spacing-sm); /* интервал между иконкой и текстом */
+  background: none; /* без фоновой заливки по умолчанию */
+  border-left: none; /* убираем боковые границы (унификация) */
+  border-right: none; /* убираем боковые границы */
+  border-top: none; /* убираем верхнюю границу (унификация) */
+  width: 100%; /* опция растягивается на всю ширину списка */
+  text-align: left; /* выравнивание текста по левому краю */
+  font-family: inherit; /* наследуем семейство шрифта */
 }
 
 .custom-select-option:last-child {
-  border-bottom: none;
+  border-bottom: none; /* у последней опции нет нижней линии */
 }
 
 .custom-select-option:hover {
-  background: var(--bg-secondary);
-  color: var(--accent-primary);
+  background: var(--bg-secondary); /* подсветка опции при наведении */
+  color: var(--accent-primary); /* акцентируем текст при hover */
 }
 
 .custom-select-option.selected {
-  background: var(--accent-primary);
-  color: #000;
-  font-weight: 600;
+  background: var(--accent-primary); /* выделяем выбранную опцию акцентным фоном */
+  color: #000; /* контрастный чёрный текст на жёлтом фоне */
+  font-weight: 600; /* небольшой акцент весом шрифта */
 }
 
 .custom-select-option.create-new {
-  color: var(--accent-primary);
-  font-weight: 500;
-  border-top: 1px solid var(--border-color);
-  background: rgba(255, 221, 0, 0.05);
+  color: var(--accent-primary); /* акцентный текст для опции «создать новую» */
+  font-weight: 500; /* небольшой акцент весом шрифта */
+  border-top: 1px solid var(--border-color); /* разделительная линия сверху */
+  background: rgba(255, 221, 0, 0.05); /* лёгкая акцентная подложка */
 }
 
 .custom-select-option.create-new:hover {
-  background: rgba(255, 221, 0, 0.1);
+  background: rgba(255, 221, 0, 0.1); /* чуть ярче при наведении */
 }
 
 .custom-select-option.recommended {
-  border-left: 3px solid #4ade80;
-  padding-left: calc(var(--spacing-md) - 3px);
-  background: rgba(74, 222, 128, 0.05);
+  border-left: 3px solid #4ade80; /* зелёный индикатор «рекомендуемая» слева */
+  padding-left: calc(var(--spacing-md) - 3px); /* компенсируем ширину индикатора */
+  background: rgba(74, 222, 128, 0.05); /* лёгкая зелёная подложка */
 }
 
 .custom-select-option.user-choice {
-  border-left: 3px solid var(--accent-primary);
-  padding-left: calc(var(--spacing-md) - 3px);
-  background: rgba(255, 221, 0, 0.05);
+  border-left: 3px solid var(--accent-primary); /* жёлтый индикатор «выбор пользователя» слева */
+  padding-left: calc(var(--spacing-md) - 3px); /* компенсируем ширину индикатора */
+  background: rgba(255, 221, 0, 0.05); /* лёгкая жёлтая подложка */
 }
 
 /* Иконка для рекомендуемых опций */
 .custom-select-option.recommended::before {
-  content: "✨";
-  margin-right: var(--spacing-xs);
+  content: "✨"; /* маркер-иконка перед текстом */
+  margin-right: var(--spacing-xs); /* отступ справа от иконки */
 }
 
 /* Inline input для создания новой опции */
 .custom-select-create-input {
-  width: 100%;
-  padding: var(--spacing-sm);
-  background: var(--bg-secondary);
-  border: 1px solid var(--accent-primary);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
+  width: 100%; /* поле на всю ширину списка */
+  padding: var(--spacing-sm); /* внутренние отступы */
+  background: var(--bg-secondary); /* тёмная подложка поля */
+  border: 1px solid var(--accent-primary); /* акцентная рамка для визуального отличия */
+  border-radius: var(--radius-sm); /* лёгкое скругление углов */
+  color: var(--text-primary); /* светлый текст */
+  font-size: var(--font-size-sm); /* компактный размер шрифта */
+  font-family: inherit; /* наследуем семейство шрифта */
 }
 
 .custom-select-create-input:focus {
-  outline: none;
-  border-color: var(--accent-hover);
-  box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2);
+  outline: none; /* без системного outline */
+  border-color: var(--accent-hover); /* чуть ярче акцент при фокусе */
+  box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2); /* мягкое свечение вокруг поля */
 }
 
 /* Скроллбар для опций */
 .custom-select-options::-webkit-scrollbar {
-  width: 6px;
+  width: 6px; /* тонкий скроллбар в списке опций */
 }
 
 .custom-select-options::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent; /* прозрачный трек */
 }
 
 .custom-select-options::-webkit-scrollbar-thumb {
-  background: rgba(255, 221, 0, 0.3);
-  border-radius: var(--radius-sm);
-}
-
-/* Адаптация для мобильных */
-@media (max-width: 768px) {
-  .custom-select-options {
-    max-height: 150px;
-  }
-  
-  .custom-select-option {
-    padding: var(--spacing-sm);
-  }
+  background: rgba(255, 221, 0, 0.3); /* ползунок с мягким акцентом */
+  border-radius: var(--radius-sm); /* небольшое скругление ползунка */
 }
 
 /* Цветовые индикаторы размещения */
 .custom-select-button.recommended-choice {
-  border-color: #4ade80 !important;
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2) !important;
+  border-color: #4ade80 !important; /* зелёная акцентная рамка для «рекомендуемого» выбора */
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2) !important; /* мягкое внешнее свечение */
 }
 
 .custom-select-button.user-choice {
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2) !important;
+  border-color: var(--accent-primary) !important; /* жёлтая акцентная рамка для «выбора пользователя» */
+  box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2) !important; /* мягкое внешнее свечение */
 }
