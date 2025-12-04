@@ -406,6 +406,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         let webConfig = WKWebViewConfiguration()
         webConfig.preferences.javaScriptEnabled = true
         
+        // КРИТИЧНО: Разрешить JavaScript для локальных файлов
+        if #available(macOS 10.15, *) {
+            webConfig.defaultWebpagePreferences.allowsContentJavaScript = true
+        }
+        webConfig.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        webConfig.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
+        
         let contentController = webConfig.userContentController
         contentController.add(self, name: "executeCommand")
         contentController.add(self, name: "closeOverlay")
@@ -435,6 +442,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         print("✅ WebView загрузка завершена")
+        
+        // Проверим загрузился ли main.js
+        let checkJS = "typeof initializeModal === 'function' ? 'JS загружен' : 'JS НЕ загружен'"
+        webView.evaluateJavaScript(checkJS) { result, error in
+            if let result = result {
+                print("📦 Проверка main.js: \(result)")
+            }
+            if let error = error {
+                print("❌ Ошибка проверки JS: \(error)")
+            }
+        }
+        
+        // Принудительно запустить инициализацию
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let initJS = "if (typeof initialize === 'function') { initialize(); } else { console.error('initialize не найдена'); }"
+            webView.evaluateJavaScript(initJS) { result, error in
+                if let error = error {
+                    print("❌ Ошибка инициализации: \(error)")
+                } else {
+                    print("✅ Инициализация запущена из Swift")
+                }
+            }
+        }
+        
         applyScale()
     }
     
@@ -463,15 +494,48 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         let fallbackHTML = """
         <!DOCTYPE html>
         <html>
-        <head><meta charset="utf-8">
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            html, body { background: transparent !important; height: 100%; }
-            body { color: #fff; font-family: -apple-system; display: flex; justify-content: center; align-items: center; height: 100vh; }
-            h1 { font-size: 48px; }
-        </style>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1.0">
+            <title>Hotpaws - Debug Mode</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                html, body { 
+                    background: transparent !important; 
+                    height: 100%; 
+                    color: #fff;
+                    font-family: -apple-system, BlinkMacSystemFont;
+                }
+                body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    background: rgba(0, 0, 0, 0.8) !important;
+                }
+                .debug-message {
+                    text-align: center;
+                    padding: 40px;
+                    background: rgba(30, 30, 40, 0.9);
+                    border-radius: 12px;
+                    border: 1px solid #ffdd00;
+                }
+                h1 { font-size: 48px; margin-bottom: 20px; }
+                p { font-size: 16px; opacity: 0.8; }
+                .files-missing {
+                    background: rgba(40, 20, 20, 0.9);
+                    border-color: #ff6b6b;
+                    color: #ff9999;
+                }
+            </style>
         </head>
-        <body><h1>🔥 Hotpaws</h1></body>
+        <body>
+            <div class="debug-message files-missing">
+                <h1>🔥 Hotpaws</h1>
+                <p>Файлы ресурсов не найдены в bundle</p>
+                <p>Убедитесь что index.html, main.js, main.css скопированы в Resources/</p>
+            </div>
+        </body>
         </html>
         """
         webView.loadHTMLString(fallbackHTML, baseURL: nil)
@@ -506,6 +570,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
     // MARK: - Terminal Integration
     
     private func executeInTerminal(command: String) {
+        print("⚠️ EXECUTE IN TERMINAL CALLED: \(command)")
+        print("⚠️ Window visible: \(window.isVisible)")
         let escapedCommand = command.replacingOccurrences(of: "\\", with: "\\\\")
                                     .replacingOccurrences(of: "\"", with: "\\\"")
         

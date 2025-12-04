@@ -24,21 +24,22 @@ echo "📁 Создание структуры приложения..."
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
 
-# Компиляция Swift (x86_64 для Intel Mac)
-echo "🔨 Компиляция Swift (x86_64 - Intel)..."
+# Компиляция Swift (только Intel Mac, совместимость от macOS Ventura 13.0)
+echo "🔨 Компиляция Swift (x86_64 - Intel только, macOS Ventura+)..."
 swiftc \
     -o "$APP_BUNDLE/Contents/MacOS/hotpaws" \
     -framework Cocoa \
     -framework WebKit \
     -framework Carbon \
     -target x86_64-apple-macos13.0 \
+    -swift-version 5 \
     "$SRC_DIR"/*.swift
 
 # Копирование Info.plist
 echo "📋 Копирование Info.plist..."
 cp "$PROJECT_DIR/Info.plist" "$APP_BUNDLE/Contents/"
 
-# Копирование ресурсов (новые имена файлов)
+# Копирование ресурсов
 echo "📦 Копирование ресурсов..."
 for file in index.html main.js main.css commands.json commands-meta.json; do
     if [ -f "$RESOURCES_DIR/$file" ]; then
@@ -55,11 +56,17 @@ if [ -f "$RESOURCES_DIR/AppIcon.icns" ]; then
     cp "$RESOURCES_DIR/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/"
     echo "   ✓ AppIcon.icns"
 else
-    echo "   ⚠ AppIcon.icns не найдена"
+    echo "   ⚠ AppIcon.icns не найдена (опционально)"
 fi
+
+
 
 # Установка прав
 chmod +x "$APP_BUNDLE/Contents/MacOS/hotpaws"
+
+# Удаление quarantine атрибута (обход блокировки macOS)
+echo "🔓 Снятие quarantine атрибута..."
+xattr -cr "$APP_BUNDLE" 2>/dev/null || true
 
 echo ""
 echo "✅ Сборка завершена!"
@@ -68,6 +75,10 @@ echo "📍 Приложение: $APP_BUNDLE"
 echo ""
 echo "🚀 Запуск:"
 echo "   open $APP_BUNDLE"
+echo ""
+echo "⚠️  При первом запуске macOS может запросить разрешения:"
+echo "   - Accessibility (для AppleScript)"
+echo "   - Разрешить запуск неподписанного приложения"
 echo ""
 echo "⌨️  Горячая клавиша: F19"
 echo "   ESC — закрыть оверлей"

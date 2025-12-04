@@ -2,37 +2,59 @@
 Правила: Перед началом работ с файлом ознакомся с правилами и строго им следуй!
  1. Простые комментарии без докараций*/
 
+// DEBUG: Перехват ошибок через консоль (без alert)
+window.addEventListener('error', function(e) {
+    console.error('❌ JS Error:', e.message, 'File:', e.filename, 'Line:', e.lineno);
+});
+
 console.log('🐾 Hotpaws JS загружен');
+console.log('📊 document.readyState:', document.readyState);
 
 // Глобальные переменные
+let currentCommands = {}; // Текущие команды со всех категорий
+
+/* РЕЖИМ РЕДАКТИРОВАНИЯ - ВРЕМЕННО ОТКЛЮЧЕН
 let currentCommandData = null;
 let isEditMode = false;
 let commandsDictionary = [];
 let currentSuggestions = [];
 let selectedSuggestionIndex = -1;
 let lastInputValue = '';
-
-// Состояние селектов
-let currentCommands = {}; // Текущие команды со всех категорий
 let selectedCategory = null;
 let selectedGroup = null;
 let recommendedPlacement = null; // { category, group } из словаря
+*/
 
 
 //  Инициализация
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeModal();
-    initializeHoverEffects();
+function initialize() {
+    console.log('🚀 Инициализация Hotpaws');
+    // initializeModal(); // РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
     initializeKeyboardNavigation();
     
     // Загрузить словарь команд
-    loadCommandsDictionary();
+    // loadCommandsDictionary(); // РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
     
     // Тестовые данные для демонстрации
     loadTestData();
-});
+}
 
+// Запустить инициализацию когда DOM готов
+console.log('🤔 Проверка readyState:', document.readyState);
+
+if (document.readyState === 'loading') {
+    console.log('⏳ DOM ещё загружается, ждём DOMContentLoaded');
+    document.addEventListener('DOMContentLoaded', initialize);
+} else {
+    console.log('✅ DOM уже готов, запускаем сразу');
+    initialize();
+}
+
+
+/* ============================================
+   РЕЖИМ РЕДАКТИРОВАНИЯ - ВРЕМЕННО ОТКЛЮЧЕН
+   ============================================
 
 // Инициализация модального окна
 
@@ -72,6 +94,11 @@ function initializeModal() {
     initializeAutocomplete();
     initializeSelects();
 }
+*/
+
+/* ============================================
+   РЕЖИМ РЕДАКТИРОВАНИЯ - ВСЕ ФУНКЦИИ НИЖЕ ВРЕМЕННО ОТКЛЮЧЕНЫ
+   ============================================
 
 // ============================================
 //   Загрузка словаря команд
@@ -80,6 +107,7 @@ function initializeModal() {
 /**
  * Загрузить словарь команд для автодополнения
  */
+/*
 async function loadCommandsDictionary() {
     try {
         console.log('📚 Загружаем словарь команд...');
@@ -108,7 +136,12 @@ async function loadCommandsDictionary() {
  */
 function initializeAutocomplete() {
     const commandInput = document.getElementById('command-input');
-    const commandGroup = document.querySelector('#command-input').closest('.form-group');
+    
+    // Проверка существования элемента
+    if (!commandInput) {
+        console.warn('⚠️ #command-input не найден, пропускаем инициализацию автодополнения');
+        return;
+    }
     
     // Создаём контейнер для автодополнения
     const autocompleteContainer = document.createElement('div');
@@ -634,33 +667,51 @@ function saveCommand() {
     closeCommandEditor();
 }
 
+*/
+
 // ============================================
 //   Hover эффекты (для WKWebView совместимости)
 // ============================================
 
 function initializeHoverEffects() {
-    // Обработка hover для команд и табов категорий
-    document.querySelectorAll('.command, .category-tab').forEach(el => {
+    // Обработка hover только для табов категорий
+    document.querySelectorAll('.category-tab').forEach(el => {
         el.addEventListener('mouseenter', () => el.classList.add('hover'));
         el.addEventListener('mouseleave', () => el.classList.remove('hover'));
+    });
+}
+
+/**
+ * Привязать обработчики событий к кнопке команды
+ * Вызывается при создании каждой команды в showCategory()
+ */
+function attachCommandHandlers(buttonElement, commandData) {
+    // Hover эффекты
+    buttonElement.addEventListener('mouseenter', () => buttonElement.classList.add('hover'));
+    buttonElement.addEventListener('mouseleave', () => buttonElement.classList.remove('hover'));
+    
+    // Клик по команде
+    buttonElement.addEventListener('click', function(e) {
+        e.preventDefault();
         
-        // В режиме редактирования добавляем клик для команд
-        if (el.classList.contains('command')) {
-            el.addEventListener('click', function() {
-                if (isEditMode) {
-                    openCommandEditor({
-                        id: 'test-command-' + Math.random(),
-                        label: el.querySelector('.command-label')?.textContent || 'Команда',
-                        command: el.querySelector('.command-code')?.textContent || '',
-                        description: el.querySelector('.command-description')?.textContent || '',
-                        categoryId: 'git',
-                        groupName: 'Базовое'
-                    });
-                } else {
-                    executeCommand(el.querySelector('.command-code')?.textContent || '');
-                }
+        const commandCode = buttonElement.querySelector('.command-code')?.textContent || '';
+        
+        /* РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
+        if (isEditMode) {
+            openCommandEditor({
+                id: 'test-command-' + Math.random(),
+                label: buttonElement.querySelector('.command-label')?.textContent || 'Команда',
+                command: commandCode,
+                description: buttonElement.querySelector('.command-description')?.textContent || '',
+                categoryId: 'git',
+                groupName: 'Базовое'
             });
-        }
+        } else {
+        */
+            // Выполнение команды
+            console.log('🎯 Клик на команду:', commandCode);
+            executeCommand(commandCode);
+        /* } */
     });
 }
 
@@ -670,10 +721,11 @@ function initializeHoverEffects() {
 
 function initializeKeyboardNavigation() {
     document.addEventListener('keydown', function(e) {
-        // Пропускаем если модальное окно открыто
+        /* РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
         if (document.getElementById('modal-overlay').classList.contains('visible')) {
             return;
         }
+        */
         
         switch(e.key) {
             case 'Escape':
@@ -687,13 +739,15 @@ function initializeKeyboardNavigation() {
                 e.preventDefault();
                 switchCategory(1);
                 break;
+            /* РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
             case 'e':
             case 'E':
-                if (e.metaKey || e.ctrlKey) { // Cmd+E или Ctrl+E
+                if (e.metaKey || e.ctrlKey) {
                     e.preventDefault();
                     toggleEditMode();
                 }
                 break;
+            */
         }
     });
 }
@@ -707,6 +761,7 @@ function initializeKeyboardNavigation() {
  */
 function executeCommand(command) {
     console.log('🚀 Выполнение команды:', command);
+    console.trace('📍 Стек вызова executeCommand:');
     
     // Отправка команды в Swift через webkit.messageHandlers
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.executeCommand) {
@@ -746,9 +801,7 @@ function switchCategory(direction) {
     tabs[newIndex].click();
 }
 
-/**
- * Переключить режим редактирования
- */
+/* РЕЖИМ РЕДАКТИРОВАНИЯ - ОТКЛЮЧЕН
 function toggleEditMode() {
     isEditMode = !isEditMode;
     const overlay = document.querySelector('.overlay');
@@ -792,6 +845,7 @@ function hideEditModeIndicator() {
         indicator.remove();
     }
 }
+*/
 
 // ============================================
 //   Загрузка и рендер данных
@@ -864,6 +918,7 @@ function showCategory(category) {
         group.commands.forEach(command => {
             const commandBtn = document.createElement('button');
             commandBtn.className = 'command';
+            commandBtn.type = 'button'; // Явно указываем тип чтобы избежать submit
             
             commandBtn.innerHTML = `
                 <div class="command-label">${command.label}</div>
@@ -871,14 +926,14 @@ function showCategory(category) {
                 ${command.description ? `<div class="command-description">${command.description}</div>` : ''}
             `;
             
+            // Добавляем обработчики событий СРАЗУ при создании
+            attachCommandHandlers(commandBtn, command);
+            
             commandsDiv.appendChild(commandBtn);
         });
         
         container.appendChild(groupDiv);
     });
-    
-    // Переинициализируем hover эффекты для новых элементов
-    initializeHoverEffects();
 }
 
 // ============================================
@@ -978,20 +1033,14 @@ function loadTestData() {
     
     loadCommands(testData);
     
-    // Тест режима редактирования (включаем сразу для демо)
-    setTimeout(() => {
-        console.log('🧪 Включаем режим редактирования для демонстрации');
-        toggleEditMode();
-    }, 1000);
+    // Режим редактирования отключён по умолчанию
+    // Включить: Cmd+E или через меню в status bar
 }
 
-// ============================================
-//   Кастомные селекты
-// ============================================
+/* ============================================
+   РЕЖИМ РЕДАКТИРОВАНИЯ - КАСТОМНЫЕ СЕЛЕКТЫ ОТКЛЮЧЕНЫ
+   ============================================
 
-/**
- * Инициализация кастомных селектов
- */
 function initializeSelects() {
     initializeCustomSelect('category-select-wrapper', 'category-select', onCategoryChange);
     initializeCustomSelect('group-select-wrapper', 'group-select', onGroupChange);
@@ -1422,3 +1471,4 @@ function resetSelects() {
     const commandInput = document.getElementById('command-input');
     commandInput.classList.remove('field-active', 'field-recommended', 'field-match', 'field-custom', 'field-conflict');
 }
+*/
