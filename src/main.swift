@@ -178,6 +178,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         let settingsItem = NSMenuItem(title: "Настройки", action: nil, keyEquivalent: "")
         let settingsSubmenu = NSMenu()
         
+        // Редактировать команды
+        let editCommandsItem = NSMenuItem(title: "Редактировать команды", action: #selector(enterEditMode), keyEquivalent: "")
+        editCommandsItem.target = self
+        settingsSubmenu.addItem(editCommandsItem)
+        
+        settingsSubmenu.addItem(NSMenuItem.separator())
+        
         // -- Терминал --
         let terminalItem = NSMenuItem(title: "Терминал", action: nil, keyEquivalent: "")
         let terminalSubmenu = NSMenu()
@@ -295,6 +302,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         NSApp.terminate(nil)
     }
     
+    // MARK: - Edit Mode
+    
+    @objc func enterEditMode() {
+        // Сначала показать оверлей если скрыт
+        if !window.isVisible {
+            showOverlay()
+            // Небольшая задержка чтобы WebView загрузился
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.sendEnterEditModeToJS()
+            }
+        } else {
+            sendEnterEditModeToJS()
+        }
+    }
+    
+    private func sendEnterEditModeToJS() {
+        let js = "if (typeof enterEditMode === 'function') { enterEditMode(); }"
+        webView?.evaluateJavaScript(js) { result, error in
+            if let error = error {
+                print("Ошибка входа в режим редактирования: \(error)")
+            } else {
+                print("Режим редактирования активирован")
+            }
+        }
+    }
+    
     // MARK: - Hot Key Registration
     
     private func registerHotKey() {
@@ -376,6 +409,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         let contentController = webConfig.userContentController
         contentController.add(self, name: "executeCommand")
         contentController.add(self, name: "closeOverlay")
+        contentController.add(self, name: "enterEditMode")
+        contentController.add(self, name: "exitEditMode")
         
         let containerView = NSView(frame: window.contentView!.bounds)
         containerView.autoresizingMask = [.width, .height]
@@ -454,6 +489,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
             
         case "closeOverlay":
             hideOverlay()
+            
+        case "enterEditMode":
+            print("JS запросил режим редактирования")
+            // Уже в режиме редактирования, ничего дополнительного не делаем
+            
+        case "exitEditMode":
+            print("JS вышел из режима редактирования")
+            // Можно добавить дополнительную логику если нужно
             
         default:
             break

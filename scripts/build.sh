@@ -38,21 +38,21 @@ swiftc \
 echo "📋 Копирование Info.plist..."
 cp "$PROJECT_DIR/Info.plist" "$APP_BUNDLE/Contents/"
 
-# Копирование ресурсов
+# Копирование ресурсов (новые имена файлов)
 echo "📦 Копирование ресурсов..."
-for file in index.html script.js style.css commands.json; do
+for file in index.html main.js main.css commands.json commands-meta.json; do
     if [ -f "$RESOURCES_DIR/$file" ]; then
         cp "$RESOURCES_DIR/$file" "$APP_BUNDLE/Contents/Resources/"
         echo "   ✓ $file"
     else
-        echo "   ⚠ $file не найден (будет использован fallback)"
+        echo "   ⚠ $file не найден"
     fi
 done
 
 # Копирование иконки
 echo "🎨 Копирование иконки..."
-if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
-    cp "$PROJECT_DIR/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/"
+if [ -f "$RESOURCES_DIR/AppIcon.icns" ]; then
+    cp "$RESOURCES_DIR/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/"
     echo "   ✓ AppIcon.icns"
 else
     echo "   ⚠ AppIcon.icns не найдена"
@@ -69,12 +69,5 @@ echo ""
 echo "🚀 Запуск:"
 echo "   open $APP_BUNDLE"
 echo ""
-echo "   или напрямую:"
-echo "   $APP_BUNDLE/Contents/MacOS/hotpaws"
-echo ""
 echo "⌨️  Горячая клавиша: F19"
 echo "   ESC — закрыть оверлей"
-echo ""
-echo "⚠️  При первом запуске macOS попросит разрешения:"
-echo "   • Accessibility (для горячих клавиш)"
-echo "   • Automation/Terminal (для отправки команд)"

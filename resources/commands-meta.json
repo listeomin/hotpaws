@@ -1,0 +1,931 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "command": "git status",
+      "description": "Показать состояние репозитория",
+      "category": "Git",
+      "group": "Базовое",
+      "aliases": ["gs"]
+    },
+    {
+      "command": "git add .",
+      "description": "Добавить все изменения в индекс",
+      "category": "Git",
+      "group": "Базовое",
+      "aliases": ["ga"]
+    },
+    {
+      "command": "git commit -m 'message'",
+      "description": "Создать коммит с сообщением",
+      "category": "Git",
+      "group": "Базовое",
+      "aliases": ["gc"]
+    },
+    {
+      "command": "git log --oneline",
+      "description": "Показать историю коммитов кратко",
+      "category": "Git",
+      "group": "История",
+      "aliases": ["gl"]
+    },
+    {
+      "command": "git log --graph --all --decorate",
+      "description": "Визуализация истории с ветками",
+      "category": "Git",
+      "group": "История"
+    },
+    {
+      "command": "git diff",
+      "description": "Показать незакоммиченные изменения",
+      "category": "Git",
+      "group": "Базовое"
+    },
+    {
+      "command": "git diff --staged",
+      "description": "Показать изменения в индексе",
+      "category": "Git",
+      "group": "Базовое"
+    },
+    {
+      "command": "git branch",
+      "description": "Список локальных веток",
+      "category": "Git",
+      "group": "Ветки",
+      "aliases": ["gb"]
+    },
+    {
+      "command": "git branch -a",
+      "description": "Список всех веток (локальных и удалённых)",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git branch -d branch_name",
+      "description": "Удалить ветку",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git branch -m old_name new_name",
+      "description": "Переименовать ветку",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git checkout -b branch_name",
+      "description": "Создать и переключиться на новую ветку",
+      "category": "Git",
+      "group": "Ветки",
+      "aliases": ["gcb"]
+    },
+    {
+      "command": "git checkout branch_name",
+      "description": "Переключиться на ветку",
+      "category": "Git",
+      "group": "Ветки",
+      "aliases": ["gco"]
+    },
+    {
+      "command": "git switch branch_name",
+      "description": "Переключиться на ветку (новый способ)",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git merge branch_name",
+      "description": "Слить ветку в текущую",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git rebase branch_name",
+      "description": "Перебазировать текущую ветку",
+      "category": "Git",
+      "group": "Ветки"
+    },
+    {
+      "command": "git push origin branch_name",
+      "description": "Отправить ветку на удалённый сервер",
+      "category": "Git",
+      "group": "Удалённые",
+      "aliases": ["gp"]
+    },
+    {
+      "command": "git push -u origin branch_name",
+      "description": "Отправить ветку и установить отслеживание",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git push origin --delete branch_name",
+      "description": "Удалить ветку на удалённом сервере",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git pull",
+      "description": "Получить и слить изменения с удалённого сервера",
+      "category": "Git",
+      "group": "Удалённые",
+      "aliases": ["gl"]
+    },
+    {
+      "command": "git fetch",
+      "description": "Получить изменения с удалённого сервера",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git clone repo_url",
+      "description": "Клонировать репозиторий",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git remote -v",
+      "description": "Показать удалённые репозитории",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git remote add origin url",
+      "description": "Добавить удалённый репозиторий",
+      "category": "Git",
+      "group": "Удалённые"
+    },
+    {
+      "command": "git stash",
+      "description": "Спрятать текущие изменения",
+      "category": "Git",
+      "group": "Сохранение"
+    },
+    {
+      "command": "git stash list",
+      "description": "Показать список спрятанных изменений",
+      "category": "Git",
+      "group": "Сохранение"
+    },
+    {
+      "command": "git stash pop",
+      "description": "Применить и удалить спрятанные изменения",
+      "category": "Git",
+      "group": "Сохранение"
+    },
+    {
+      "command": "git stash apply stash@{0}",
+      "description": "Применить спрятанные изменения",
+      "category": "Git",
+      "group": "Сохранение"
+    },
+    {
+      "command": "git tag v1.0.0",
+      "description": "Создать лёгкий тег",
+      "category": "Git",
+      "group": "Теги"
+    },
+    {
+      "command": "git tag -a v1.0.0 -m 'message'",
+      "description": "Создать аннотированный тег",
+      "category": "Git",
+      "group": "Теги"
+    },
+    {
+      "command": "git tag -l",
+      "description": "Показать все теги",
+      "category": "Git",
+      "group": "Теги"
+    },
+    {
+      "command": "git push origin v1.0.0",
+      "description": "Отправить тег на сервер",
+      "category": "Git",
+      "group": "Теги"
+    },
+    {
+      "command": "git reset --soft HEAD~1",
+      "description": "Отменить последний коммит, сохранив изменения",
+      "category": "Git",
+      "group": "История"
+    },
+    {
+      "command": "git reset --hard HEAD~1",
+      "description": "Отменить последний коммит и изменения",
+      "category": "Git",
+      "group": "История"
+    },
+    {
+      "command": "git revert commit_hash",
+      "description": "Создать новый коммит, отменяющий изменения",
+      "category": "Git",
+      "group": "История"
+    },
+    {
+      "command": "git cherry-pick commit_hash",
+      "description": "Применить конкретный коммит",
+      "category": "Git",
+      "group": "История"
+    },
+    {
+      "command": "ls",
+      "description": "Показать содержимое папки",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "ls -la",
+      "description": "Показать все файлы с деталями",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "ls -lah",
+      "description": "Показать файлы с размерами в человеческом формате",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cd folder_name",
+      "description": "Перейти в папку",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cd ..",
+      "description": "Перейти на уровень выше",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cd ~",
+      "description": "Перейти в домашнюю папку",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "pwd",
+      "description": "Показать текущую папку",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "mkdir folder_name",
+      "description": "Создать новую папку",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "mkdir -p path/to/folder",
+      "description": "Создать папку со всеми родителями",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "rm file_name",
+      "description": "Удалить файл",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "rm -r folder_name",
+      "description": "Удалить папку рекурсивно",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cp file_name copy_name",
+      "description": "Копировать файл",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cp -r folder_name copy_name",
+      "description": "Копировать папку рекурсивно",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "mv file_name new_name",
+      "description": "Переместить или переименовать файл",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "touch file_name",
+      "description": "Создать пустой файл",
+      "category": "Файлы",
+      "group": "Навигация"
+    },
+    {
+      "command": "cat file_name",
+      "description": "Показать содержимое файла",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "head -n 20 file_name",
+      "description": "Показать первые 20 строк файла",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "tail -n 20 file_name",
+      "description": "Показать последние 20 строк файла",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "tail -f file_name",
+      "description": "Следить за обновлениями файла в реальном времени",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "wc -l file_name",
+      "description": "Подсчитать количество строк в файле",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "grep 'pattern' file_name",
+      "description": "Найти строки, содержащие текст",
+      "category": "Файлы",
+      "group": "Поиск",
+      "aliases": ["gr"]
+    },
+    {
+      "command": "grep -r 'pattern' folder_name",
+      "description": "Найти текст во всех файлах папки",
+      "category": "Файлы",
+      "group": "Поиск"
+    },
+    {
+      "command": "grep -i 'pattern' file_name",
+      "description": "Найти текст (без учёта регистра)",
+      "category": "Файлы",
+      "group": "Поиск"
+    },
+    {
+      "command": "find . -name 'file_name'",
+      "description": "Найти файл по имени",
+      "category": "Файлы",
+      "group": "Поиск"
+    },
+    {
+      "command": "find . -type f -name '*.js'",
+      "description": "Найти все файлы с расширением",
+      "category": "Файлы",
+      "group": "Поиск"
+    },
+    {
+      "command": "chmod 755 file_name",
+      "description": "Изменить права доступа файла",
+      "category": "Файлы",
+      "group": "Права",
+      "aliases": ["chm"]
+    },
+    {
+      "command": "chmod +x script.sh",
+      "description": "Сделать файл исполняемым",
+      "category": "Файлы",
+      "group": "Права"
+    },
+    {
+      "command": "chown user:group file_name",
+      "description": "Изменить владельца файла",
+      "category": "Файлы",
+      "group": "Права"
+    },
+    {
+      "command": "du -sh folder_name",
+      "description": "Показать размер папки",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "du -sh *",
+      "description": "Показать размер всех папок в текущей",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "df -h",
+      "description": "Показать свободное место на дисках",
+      "category": "Файлы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "tar -czf archive.tar.gz folder_name",
+      "description": "Создать сжатый архив",
+      "category": "Файлы",
+      "group": "Архивы"
+    },
+    {
+      "command": "tar -xzf archive.tar.gz",
+      "description": "Распаковать tar.gz архив",
+      "category": "Файлы",
+      "group": "Архивы"
+    },
+    {
+      "command": "zip -r archive.zip folder_name",
+      "description": "Создать ZIP архив",
+      "category": "Файлы",
+      "group": "Архивы"
+    },
+    {
+      "command": "unzip archive.zip",
+      "description": "Распаковать ZIP архив",
+      "category": "Файлы",
+      "group": "Архивы"
+    },
+    {
+      "command": "ps aux",
+      "description": "Показать все запущенные процессы",
+      "category": "Процессы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "ps aux | grep process_name",
+      "description": "Найти процесс по имени",
+      "category": "Процессы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "top",
+      "description": "Мониторить процессы в реальном времени",
+      "category": "Процессы",
+      "group": "Мониторинг"
+    },
+    {
+      "command": "top -o %CPU",
+      "description": "Отсортировать процессы по CPU",
+      "category": "Процессы",
+      "group": "Мониторинг"
+    },
+    {
+      "command": "kill -9 process_id",
+      "description": "Принудительно завершить процесс",
+      "category": "Процессы",
+      "group": "Управление"
+    },
+    {
+      "command": "killall process_name",
+      "description": "Завершить все процессы с именем",
+      "category": "Процессы",
+      "group": "Управление"
+    },
+    {
+      "command": "lsof -i :8080",
+      "description": "Показать процесс, занимающий порт",
+      "category": "Процессы",
+      "group": "Просмотр"
+    },
+    {
+      "command": "bg",
+      "description": "Запустить приостановленный процесс в фоне",
+      "category": "Процессы",
+      "group": "Управление"
+    },
+    {
+      "command": "fg",
+      "description": "Вернуть фоновый процесс на передний план",
+      "category": "Процессы",
+      "group": "Управление"
+    },
+    {
+      "command": "jobs",
+      "description": "Показать список фоновых задач",
+      "category": "Процессы",
+      "group": "Управление"
+    },
+    {
+      "command": "ping -c 5 google.com",
+      "description": "Проверить доступность хоста",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "traceroute google.com",
+      "description": "Показать путь пакетов до хоста",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "nslookup domain.com",
+      "description": "Получить IP адрес домена",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "dig domain.com",
+      "description": "Подробная информация о DNS записях",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "ifconfig",
+      "description": "Показать конфигурацию сетевых интерфейсов",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "netstat -an",
+      "description": "Показать активные сетевые соединения",
+      "category": "Сеть",
+      "group": "Диагностика"
+    },
+    {
+      "command": "ssh user@host",
+      "description": "Подключиться к удалённому серверу",
+      "category": "Сеть",
+      "group": "SSH"
+    },
+    {
+      "command": "ssh-keygen -t rsa -b 4096",
+      "description": "Создать SSH ключ",
+      "category": "Сеть",
+      "group": "SSH"
+    },
+    {
+      "command": "ssh-copy-id user@host",
+      "description": "Скопировать открытый ключ на сервер",
+      "category": "Сеть",
+      "group": "SSH"
+    },
+    {
+      "command": "scp file_name user@host:/path",
+      "description": "Скопировать файл на удалённый сервер",
+      "category": "Сеть",
+      "group": "SSH"
+    },
+    {
+      "command": "wget url",
+      "description": "Загрузить файл с URL",
+      "category": "Сеть",
+      "group": "Загрузка"
+    },
+    {
+      "command": "curl -O url",
+      "description": "Загрузить файл через curl",
+      "category": "Сеть",
+      "group": "Загрузка"
+    },
+    {
+      "command": "curl -H 'Header: value' url",
+      "description": "Сделать HTTP запрос с заголовками",
+      "category": "Сеть",
+      "group": "Загрузка"
+    },
+    {
+      "command": "uname -a",
+      "description": "Информация о системе и ядре",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "sw_vers",
+      "description": "Версия macOS",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "system_profiler SPHardwareDataType",
+      "description": "Подробная информация об оборудовании",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "uptime",
+      "description": "Показать время работы системы",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "w",
+      "description": "Показать, кто залогинен",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "who",
+      "description": "Список текущих пользователей",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "whoami",
+      "description": "Показать текущего пользователя",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "id",
+      "description": "Показать ID пользователя и группы",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "date",
+      "description": "Показать текущую дату и время",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "cal",
+      "description": "Показать календарь",
+      "category": "Система",
+      "group": "Информация"
+    },
+    {
+      "command": "diskutil list",
+      "description": "Показать список дисков",
+      "category": "Система",
+      "group": "Диски"
+    },
+    {
+      "command": "diskutil secureErase freespace 0 /Volumes/DriveName",
+      "description": "Безопасно стереть свободное место",
+      "category": "Система",
+      "group": "Диски"
+    },
+    {
+      "command": "mount",
+      "description": "Показать примонтированные диски",
+      "category": "Система",
+      "group": "Диски"
+    },
+    {
+      "command": "brew install package_name",
+      "description": "Установить пакет через Homebrew",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew",
+      "aliases": ["bi"]
+    },
+    {
+      "command": "brew uninstall package_name",
+      "description": "Удалить пакет",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew upgrade package_name",
+      "description": "Обновить пакет",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew list",
+      "description": "Показать установленные пакеты",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew search package_name",
+      "description": "Поиск пакета в Homebrew",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew info package_name",
+      "description": "Информация о пакете",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew update",
+      "description": "Обновить список пакетов Homebrew",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "brew cleanup",
+      "description": "Очистить кэш Homebrew",
+      "category": "Пакетные менеджеры",
+      "group": "Homebrew"
+    },
+    {
+      "command": "npm install package_name",
+      "description": "Установить пакет через npm",
+      "category": "Пакетные менеджеры",
+      "group": "NPM",
+      "aliases": ["ni"]
+    },
+    {
+      "command": "npm install -g package_name",
+      "description": "Установить пакет глобально",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm uninstall package_name",
+      "description": "Удалить пакет",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm update",
+      "description": "Обновить все пакеты",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm list",
+      "description": "Показать установленные пакеты",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm search package_name",
+      "description": "Поиск пакета на npm",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm start",
+      "description": "Запустить скрипт start из package.json",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "npm run build",
+      "description": "Запустить скрипт build",
+      "category": "Пакетные менеджеры",
+      "group": "NPM"
+    },
+    {
+      "command": "pip install package_name",
+      "description": "Установить пакет через pip",
+      "category": "Пакетные менеджеры",
+      "group": "Python",
+      "aliases": ["pi"]
+    },
+    {
+      "command": "pip install --upgrade package_name",
+      "description": "Обновить пакет через pip",
+      "category": "Пакетные менеджеры",
+      "group": "Python"
+    },
+    {
+      "command": "pip uninstall package_name",
+      "description": "Удалить пакет",
+      "category": "Пакетные менеджеры",
+      "group": "Python"
+    },
+    {
+      "command": "pip list",
+      "description": "Показать установленные пакеты Python",
+      "category": "Пакетные менеджеры",
+      "group": "Python"
+    },
+    {
+      "command": "pip freeze > requirements.txt",
+      "description": "Сохранить список пакетов в файл",
+      "category": "Пакетные менеджеры",
+      "group": "Python"
+    },
+    {
+      "command": "docker ps",
+      "description": "Показать запущенные контейнеры",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker ps -a",
+      "description": "Показать все контейнеры",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker images",
+      "description": "Показать загруженные образы",
+      "category": "Docker",
+      "group": "Образы"
+    },
+    {
+      "command": "docker pull image_name",
+      "description": "Загрузить образ из реестра",
+      "category": "Docker",
+      "group": "Образы"
+    },
+    {
+      "command": "docker build -t image_name .",
+      "description": "Создать образ из Dockerfile",
+      "category": "Docker",
+      "group": "Образы"
+    },
+    {
+      "command": "docker run -d --name container_name image_name",
+      "description": "Запустить контейнер в фоне",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker exec -it container_name bash",
+      "description": "Подключиться к контейнеру",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker stop container_name",
+      "description": "Остановить контейнер",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker rm container_name",
+      "description": "Удалить контейнер",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker logs container_name",
+      "description": "Показать логи контейнера",
+      "category": "Docker",
+      "group": "Контейнеры"
+    },
+    {
+      "command": "docker-compose up -d",
+      "description": "Запустить сервисы из docker-compose.yml",
+      "category": "Docker",
+      "group": "Compose"
+    },
+    {
+      "command": "docker-compose down",
+      "description": "Остановить сервисы",
+      "category": "Docker",
+      "group": "Compose"
+    },
+    {
+      "command": "docker-compose logs -f",
+      "description": "Следить за логами сервисов",
+      "category": "Docker",
+      "group": "Compose"
+    },
+    {
+      "command": "sed 's/old/new/g' file.txt",
+      "description": "Заменить текст в файле",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "awk '{print $1}' file.txt",
+      "description": "Извлечь первое поле из каждой строки",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "cut -d: -f1 file.txt",
+      "description": "Извлечь колонку из файла",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "sort file.txt",
+      "description": "Отсортировать строки файла",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "uniq file.txt",
+      "description": "Удалить дублирующиеся строки",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "tr 'a-z' 'A-Z' < file.txt",
+      "description": "Перевести текст в прописные буквы",
+      "category": "Текст",
+      "group": "Обработка"
+    },
+    {
+      "command": "nano file.txt",
+      "description": "Открыть файл в редакторе nano",
+      "category": "Текст",
+      "group": "Редакторы"
+    },
+    {
+      "command": "vim file.txt",
+      "description": "Открыть файл в редакторе vim",
+      "category": "Текст",
+      "group": "Редакторы"
+    },
+    {
+      "command": "vi file.txt",
+      "description": "Открыть файл в редакторе vi",
+      "category": "Текст",
+      "group": "Редакторы"
+    },
+    {
+      "command": "pbcopy < file.txt",
+      "description": "Скопировать содержимое в буфер обмена (macOS)",
+      "category": "Текст",
+      "group": "Буфер обмена"
+    },
+    {
+      "command": "pbpaste > file.txt",
+      "description": "Вставить из буфера обмена в файл (macOS)",
+      "category": "Текст",
+      "group": "Буфер обмена"
+    }
+  ]
+}

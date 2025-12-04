@@ -225,6 +225,132 @@
         </footer>
     </div>
     
-    <script src="script.js"></script>
+    <!-- Модальное окно редактирования команды -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2>Редактирование команды</h2>
+                <button class="modal-close" id="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="command-form">
+                    <!-- Команда (обязательное поле) -->
+                    <div class="form-group">
+                        <label for="command-input" class="form-label">
+                            <span class="form-label-text">Команда</span>
+                            <span class="form-label-required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="command-input" 
+                            class="form-input" 
+                            placeholder="git status"
+                            required
+                        >
+                    </div>
+                    
+                    <!-- Описание (опциональное поле) -->
+                    <div class="form-group">
+                        <label for="description-input" class="form-label">
+                            <span class="form-label-text">Описание</span>
+                        </label>
+                        <textarea 
+                            id="description-input" 
+                            class="form-textarea" 
+                            placeholder="Показать состояние репозитория Git"
+                            rows="3"
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Категория (связанный select) -->
+                    <div class="form-group">
+                        <label for="category-select" class="form-label">
+                            <span class="form-label-text">Категория</span>
+                        </label>
+                        <div class="custom-select" id="category-select-wrapper">
+                            <button type="button" class="custom-select-button" id="category-select-button">
+                                <span class="custom-select-value">Выберите категорию</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </button>
+                            <div class="custom-select-options" id="category-select-options">
+                                <!-- Options будут добавлены через JS -->
+                            </div>
+                            <input type="hidden" id="category-select" name="category" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Группа команд (зависит от категории) -->
+                    <div class="form-group">
+                        <label for="group-select" class="form-label">
+                            <span class="form-label-text">Группа команд</span>
+                        </label>
+                        <div class="custom-select" id="group-select-wrapper">
+                            <button type="button" class="custom-select-button" id="group-select-button" disabled>
+                                <span class="custom-select-value">Сначала выберите категорию</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </button>
+                            <div class="custom-select-options" id="group-select-options">
+                                <!-- Options будут добавлены через JS -->
+                            </div>
+                            <input type="hidden" id="group-select" name="group" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group form-group-placeholder">
+                        <label class="form-label form-label-placeholder">
+                            <span class="form-label-text">Алиас</span>
+                            <span class="form-label-coming-soon">скоро</span>
+                        </label>
+                        <div class="form-input-placeholder">gs, status...</div>
+                    </div>
+                    
+                    <div class="form-group form-group-placeholder">
+                        <label class="form-label form-label-placeholder">
+                            <span class="form-label-text">Горячая клавиша</span>
+                            <span class="form-label-coming-soon">скоро</span>
+                        </label>
+                        <div class="form-input-placeholder">⌘G, Ctrl+S...</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-left">
+                    <button type="button" class="btn btn-danger" id="btn-delete">
+                        Удалить
+                    </button>
+                </div>
+                <div class="modal-footer-right">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel">
+                        Отмена
+                    </button>
+                    <button type="submit" form="command-form" class="btn btn-primary" id="btn-save">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Диалог подтверждения удаления -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-header">
+                <h3>Подтверждение удаления</h3>
+            </div>
+            <div class="confirm-body">
+                <p id="confirm-message">Удалить команду «git status»?</p>
+            </div>
+            <div class="confirm-footer">
+                <button type="button" class="btn btn-secondary" id="btn-confirm-no">
+                    Ой, нет!
+                </button>
+                <button type="button" class="btn btn-danger-confirm" id="btn-confirm-yes">
+                    Да, удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>

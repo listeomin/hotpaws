@@ -31,7 +31,7 @@ class ConfigManager {
             
             // Copy default files from bundle if they don't exist
             copyDefaultFileIfNeeded("commands.json")
-            copyDefaultFileIfNeeded("style.css")
+            copyDefaultFileIfNeeded("main.css")
             
         } catch {
             print("Error setting up config directory: \(error)")
@@ -95,7 +95,7 @@ class ConfigManager {
     }
     
     func loadStyles() -> String? {
-        let userFile = configDirectory.appendingPathComponent("style.css")
+        let userFile = configDirectory.appendingPathComponent("main.css")
         
         // Try user file first
         if FileManager.default.fileExists(atPath: userFile.path) {
@@ -109,7 +109,7 @@ class ConfigManager {
         }
         
         // Fallback to bundle
-        guard let bundleURL = bundleResourcesURL?.appendingPathComponent("style.css") else {
+        guard let bundleURL = bundleResourcesURL?.appendingPathComponent("main.css") else {
             print("Bundle resources URL not available")
             return nil
         }
