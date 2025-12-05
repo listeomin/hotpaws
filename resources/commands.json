@@ -2,6 +2,23 @@
   "version": "1.0",
   "categories": [
     {
+      "id": "zverlang",
+      "name": "Звериный язык",
+      "icon": "🐗",
+      "groups": [
+        {
+          "name": "Проекты",
+          "commands": [
+            {
+              "label": "Проект",
+              "command": "~/Dev/Scripts/new-project.sh",
+              "description": "Создать новый проект на Github"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "git",
       "name": "Git",
       "icon": "🌿",
